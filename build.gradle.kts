@@ -7,6 +7,7 @@ plugins {
 	id("org.jetbrains.kotlin.plugin.jpa") version "1.5.31"
 	kotlin("jvm") version "1.4.30"
 	kotlin("plugin.spring") version "1.4.30"
+	kotlin("kapt") version "1.4.0"
 }
 
 group = "com"
@@ -28,6 +29,10 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	implementation("javax.persistence:javax.persistence-api:2.2")
 	runtimeOnly("mysql:mysql-connector-java")
+	implementation("com.querydsl:querydsl-jpa:5.0.0")
+	compile("com.querydsl:querydsl-core:5.0.0.M1")
+	kapt("com.querydsl:querydsl-apt:5.0.0:jpa")
+	annotationProcessor(group = "com.querydsl", name = "querydsl-apt", classifier = "jpa")
 }
 
 tasks.withType<KotlinCompile> {
@@ -40,3 +45,4 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+

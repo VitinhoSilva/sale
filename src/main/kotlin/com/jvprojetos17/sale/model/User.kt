@@ -30,6 +30,6 @@ data class User(
     var email: String,
 
     @Column
-    var active: Status? = Status.ACTIVE
+    var active: Status = Status.ACTIVE
 
 )
