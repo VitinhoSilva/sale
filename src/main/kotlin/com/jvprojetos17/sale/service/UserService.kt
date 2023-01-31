@@ -55,22 +55,22 @@ class UserService(
     }
 
     fun inactivate(userId: Long) {
-        val user = findById(userId).toUser()
-
-        if (user.active == Status.INACTIVE) {
-            throw BusinessException(Errors.S102.message.format(user.email), Errors.S102.code)
-        } else {
-            user.apply { this.active = Status.INACTIVE }.let { userRepository.save(it) }
+        findById(userId).toUser().run {
+            if (active == Status.INACTIVE) {
+                throw BusinessException(Errors.S102.message.format(email), Errors.S102.code)
+            } else {
+                userRepository.save(copy(active = Status.INACTIVE))
+            }
         }
     }
 
     fun activate(userId: Long) {
-        val user = findById(userId).toUser()
-
-        if (user.active == Status.ACTIVE) {
-            throw BusinessException(Errors.S103.message.format(user.email), Errors.S103.code)
-        } else {
-            user.apply { this.active = Status.ACTIVE }.let { userRepository.save(it) }
+        findById(userId).toUser().run {
+            if (active == Status.ACTIVE) {
+                throw BusinessException(Errors.S103.message.format(email), Errors.S103.code)
+            } else {
+                userRepository.save(copy(active = Status.ACTIVE))
+            }
         }
     }
 }
