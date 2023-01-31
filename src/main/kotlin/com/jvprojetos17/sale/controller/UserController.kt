@@ -1,7 +1,7 @@
 package com.jvprojetos17.sale.controller
 
 import com.jvprojetos17.sale.enums.Status
-import com.jvprojetos17.sale.model.User
+import com.jvprojetos17.sale.request.UserRequest
 import com.jvprojetos17.sale.response.UserResponse
 import com.jvprojetos17.sale.service.UserService
 import org.springframework.data.domain.Page
@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("users")
@@ -25,7 +26,7 @@ class UserController(
     }
 
     @PostMapping
-    fun save(@RequestBody userRequest: User): ResponseEntity<HttpStatus> {
+    fun save(@RequestBody @Valid userRequest: UserRequest): ResponseEntity<HttpStatus> {
         userService.save(userRequest)
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
@@ -43,8 +44,26 @@ class UserController(
         @RequestParam(required = false) cpf: String?,
         @RequestParam(required = false) email: String?,
         @RequestParam(required = false, defaultValue = "ACTIVE") active: Status,
-    ) : ResponseEntity<Page<UserResponse>> {
+    ): ResponseEntity<Page<UserResponse>> {
         return ResponseEntity.ok().body(userService.filter(page, id, name, cpf, email, active))
+    }
+
+    @PutMapping("/{userId}")
+    fun update(@PathVariable userId: Long, @RequestBody userRequest: UserRequest): ResponseEntity<HttpStatus> {
+        userService.update(userId, userRequest)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
+
+    @PutMapping("/inactivate/{userId}")
+    fun inactivate(@PathVariable userId: Long): ResponseEntity<HttpStatus> {
+        userService.inactivate(userId)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
+
+    @PutMapping("/activate/{userId}")
+    fun activate(@PathVariable userId: Long): ResponseEntity<HttpStatus> {
+        userService.activate(userId)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
 }

@@ -1,10 +1,14 @@
 package com.jvprojetos17.sale.service
 
+import com.jvprojetos17.sale.enums.Errors
 import com.jvprojetos17.sale.enums.Status
+import com.jvprojetos17.sale.exception.BusinessException
+import com.jvprojetos17.sale.exception.NotFoundException
 import com.jvprojetos17.sale.extension.toResponse
+import com.jvprojetos17.sale.extension.toUser
 import com.jvprojetos17.sale.model.QUser
-import com.jvprojetos17.sale.model.User
 import com.jvprojetos17.sale.repository.UserRepository
+import com.jvprojetos17.sale.request.UserRequest
 import com.jvprojetos17.sale.response.UserResponse
 import com.querydsl.core.BooleanBuilder
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,16 +18,16 @@ import org.springframework.stereotype.Service
 
 @Service
 class UserService(
-    @Autowired
-    val userRepository: UserRepository
+    @Autowired val userRepository: UserRepository
 ) {
 
     fun findById(id: Long): UserResponse {
-        return userRepository.findById(id).orElseThrow().toResponse()
+        return userRepository.findById(id)
+            .orElseThrow { NotFoundException(Errors.S101.message.format(id), Errors.S101.code) }.toResponse()
     }
 
-    fun save(userRequest: User) {
-        userRepository.save(userRequest)
+    fun save(userRequest: UserRequest) {
+        userRepository.save(userRequest.toUser())
     }
 
     fun getAllActives(situation: Status): List<UserResponse> {
@@ -31,12 +35,7 @@ class UserService(
     }
 
     fun filter(
-        page: Pageable,
-        id: Long?,
-        name: String?,
-        cpf: String?,
-        email: String?,
-        active: Status
+        page: Pageable, id: Long?, name: String?, cpf: String?, email: String?, active: Status
     ): Page<UserResponse> {
 
         val qUser: QUser = QUser.user
@@ -50,4 +49,28 @@ class UserService(
         return userRepository.findAll(where, page).let { it -> it.map { it.toResponse() } }
     }
 
+    fun update(userId: Long, userRequest: UserRequest) {
+        findById(userId)
+        userRequest.toUser().let { userRepository.save(it) }
+    }
+
+    fun inactivate(userId: Long) {
+        val user = findById(userId).toUser()
+
+        if (user.active == Status.INACTIVE) {
+            throw BusinessException(Errors.S102.message.format(user.email), Errors.S102.code)
+        } else {
+            user.apply { this.active = Status.INACTIVE }.let { userRepository.save(it) }
+        }
+    }
+
+    fun activate(userId: Long) {
+        val user = findById(userId).toUser()
+
+        if (user.active == Status.ACTIVE) {
+            throw BusinessException(Errors.S103.message.format(user.email), Errors.S103.code)
+        } else {
+            user.apply { this.active = Status.ACTIVE }.let { userRepository.save(it) }
+        }
+    }
 }

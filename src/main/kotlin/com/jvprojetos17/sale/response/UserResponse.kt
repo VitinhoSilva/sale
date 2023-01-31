@@ -7,5 +7,5 @@ data class UserResponse (
     var name: String,
     var cpf: String,
     var email: String,
-    var active: Status?
+    var active: Status
 )
