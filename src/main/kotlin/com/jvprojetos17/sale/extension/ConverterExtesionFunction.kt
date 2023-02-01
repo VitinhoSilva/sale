@@ -3,11 +3,13 @@ package com.jvprojetos17.sale.extension
 import com.jvprojetos17.sale.model.Product
 import com.jvprojetos17.sale.model.User
 import com.jvprojetos17.sale.request.ProductRequest
+import com.jvprojetos17.sale.request.UserRequest
 import com.jvprojetos17.sale.response.ProductResponse
+import com.jvprojetos17.sale.response.UserResponse
 
 
-fun User.toResponse(): ProductResponse {
-    return ProductResponse(
+fun User.toResponse(): UserResponse {
+    return UserResponse(
         id = id,
         name = name,
         cpf = cpf,
@@ -16,7 +18,7 @@ fun User.toResponse(): ProductResponse {
     )
 }
 
-fun ProductResponse.toUser(): User {
+fun UserResponse.toUser(): User {
     return User(
         id = this.id,
         name = this.name,
@@ -26,7 +28,7 @@ fun ProductResponse.toUser(): User {
     )
 }
 
-fun ProductRequest.toUser(): User {
+fun UserRequest.toUser(): User {
     return User(
         name = this.name,
         cpf = this.cpf,

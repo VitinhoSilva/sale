@@ -4,13 +4,16 @@ import javax.validation.constraints.NotEmpty
 
 data class ProductRequest(
 
-    @field:NotEmpty(message = "Name must be informed!")
-    var name: String,
+    @field:NotEmpty(message = "Description must be informed!")
+    var description: String,
 
-    @field:NotEmpty(message = "Cpf must be informed!")
-    var cpf: String,
+    @field:NotEmpty(message = "Code must be informed!")
+    var code: String,
 
-    @field:NotEmpty(message = "Email must be informed!")
-    var email: String,
+    @field:NotEmpty(message = "Price must be informed!")
+    var price: Double,
+
+    @field:NotEmpty(message = "Stock must be informed!")
+    var stock: Int,
 
 )

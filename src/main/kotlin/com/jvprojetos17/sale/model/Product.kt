@@ -15,21 +15,21 @@ data class Product (
 
     @Column
     @Size(max = 255)
-    @NotEmpty(message = "Informe a descrição do produto!")
+    @NotEmpty(message = "Enter the product description!")
     var description: String,
 
     @Column
     @Size(max = 255)
-    @NotEmpty(message = "Informe o código do produto!")
+    @NotEmpty(message = "Enter the product code!")
     var code: String,
 
     @Column
-    @NotNull(message = "Informe o preço do produto!")
+    @NotNull(message = "Inform the price of the product!")
     var price: Double,
 
     @Column
     @Size(min = 1)
-    @NotNull(message = "Informe a quantidade do estoque do produto!")
+    @NotNull(message = "Inform the quantity of the product's stock!")
     var stock: Int,
 
     @Column

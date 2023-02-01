@@ -8,8 +8,8 @@ import com.jvprojetos17.sale.extension.toResponse
 import com.jvprojetos17.sale.extension.toUser
 import com.jvprojetos17.sale.model.QUser
 import com.jvprojetos17.sale.repository.UserRepository
-import com.jvprojetos17.sale.request.ProductRequest
-import com.jvprojetos17.sale.response.ProductResponse
+import com.jvprojetos17.sale.request.UserRequest
+import com.jvprojetos17.sale.response.UserResponse
 import com.querydsl.core.BooleanBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -21,22 +21,22 @@ class UserService(
     @Autowired val userRepository: UserRepository
 ) {
 
-    fun findById(id: Long): ProductResponse {
+    fun findById(id: Long): UserResponse {
         return userRepository.findById(id)
             .orElseThrow { NotFoundException(Errors.S101.message.format(id), Errors.S101.code) }.toResponse()
     }
 
-    fun save(userRequest: ProductRequest) {
+    fun save(userRequest: UserRequest) {
         userRepository.save(userRequest.toUser())
     }
 
-    fun getAllActives(situation: Status): List<ProductResponse> {
+    fun getAllActives(situation: Status): List<UserResponse> {
         return userRepository.findByActive(situation).map { it.toResponse() }
     }
 
     fun filter(
         page: Pageable, id: Long?, name: String?, cpf: String?, email: String?, active: Status
-    ): Page<ProductResponse> {
+    ): Page<UserResponse> {
 
         val qUser: QUser = QUser.user
         val where = BooleanBuilder()
@@ -50,7 +50,7 @@ class UserService(
         return userRepository.findAll(where, page).let { it -> it.map { it.toResponse() } }
     }
 
-    fun update(userId: Long, userRequest: ProductRequest) {
+    fun update(userId: Long, userRequest: UserRequest) {
         findById(userId)
         userRequest.toUser().run {
             userRepository.save(

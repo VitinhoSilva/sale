@@ -1,8 +1,8 @@
 package com.jvprojetos17.sale.controller
 
 import com.jvprojetos17.sale.enums.Status
-import com.jvprojetos17.sale.request.ProductRequest
-import com.jvprojetos17.sale.response.ProductResponse
+import com.jvprojetos17.sale.request.UserRequest
+import com.jvprojetos17.sale.response.UserResponse
 import com.jvprojetos17.sale.service.UserService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -21,18 +21,18 @@ class UserController(
 ) {
 
     @GetMapping("/{userId}")
-    fun getById(@PathVariable userId: Long): ResponseEntity<ProductResponse> {
+    fun getById(@PathVariable userId: Long): ResponseEntity<UserResponse> {
         return ResponseEntity.ok().body(userService.findById(userId))
     }
 
     @PostMapping
-    fun save(@RequestBody @Valid userRequest: ProductRequest): ResponseEntity<HttpStatus> {
+    fun save(@RequestBody @Valid userRequest: UserRequest): ResponseEntity<HttpStatus> {
         userService.save(userRequest)
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
     @GetMapping("/situation")
-    fun getAllBySituation(@RequestParam situation: Status): ResponseEntity<List<ProductResponse>> {
+    fun getAllBySituation(@RequestParam situation: Status): ResponseEntity<List<UserResponse>> {
         return ResponseEntity.ok().body(userService.getAllActives(situation))
     }
 
@@ -44,12 +44,12 @@ class UserController(
         @RequestParam(required = false) cpf: String?,
         @RequestParam(required = false) email: String?,
         @RequestParam(required = false, defaultValue = "ACTIVE") active: Status,
-    ): ResponseEntity<Page<ProductResponse>> {
+    ): ResponseEntity<Page<UserResponse>> {
         return ResponseEntity.ok().body(userService.filter(page, id, name, cpf, email, active))
     }
 
     @PutMapping("/{userId}")
-    fun update(@PathVariable userId: Long, @RequestBody userRequest: ProductRequest): ResponseEntity<HttpStatus> {
+    fun update(@PathVariable userId: Long, @RequestBody userRequest: UserRequest): ResponseEntity<HttpStatus> {
         userService.update(userId, userRequest)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
