@@ -27,7 +27,6 @@ fun UserResponse.toUser(): User {
 
 fun UserRequest.toUser(): User {
     return User(
-        id = this.id,
         name = this.name,
         cpf = this.cpf,
         email = this.email,

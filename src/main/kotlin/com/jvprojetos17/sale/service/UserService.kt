@@ -51,7 +51,11 @@ class UserService(
 
     fun update(userId: Long, userRequest: UserRequest) {
         findById(userId)
-        userRequest.toUser().let { userRepository.save(it) }
+        userRequest.toUser().run {
+            userRepository.save(
+                copy(id = userId)
+            )
+        }
     }
 
     fun inactivate(userId: Long) {

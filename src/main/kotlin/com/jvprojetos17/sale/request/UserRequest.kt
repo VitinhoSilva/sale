@@ -3,7 +3,6 @@ package com.jvprojetos17.sale.request
 import javax.validation.constraints.NotEmpty
 
 data class UserRequest(
-    var id: Long,
 
     @field:NotEmpty(message = "Nome deve ser informado!")
     var name: String,
@@ -13,4 +12,5 @@ data class UserRequest(
 
     @field:NotEmpty(message = "Email deve ser informado!")
     var email: String,
+
 )
