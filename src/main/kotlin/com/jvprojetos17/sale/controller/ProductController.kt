@@ -3,7 +3,7 @@ package com.jvprojetos17.sale.controller
 import com.jvprojetos17.sale.enums.Status
 import com.jvprojetos17.sale.request.ProductRequest
 import com.jvprojetos17.sale.response.ProductResponse
-import com.jvprojetos17.sale.service.UserService
+import com.jvprojetos17.sale.service.ProductService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -15,54 +15,53 @@ import java.util.*
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("users")
-class UserController(
-    val userService: UserService
+@RequestMapping("product")
+class ProductController(
+    val productService: ProductService
 ) {
 
-    @GetMapping("/{userId}")
-    fun getById(@PathVariable userId: Long): ResponseEntity<ProductResponse> {
-        return ResponseEntity.ok().body(userService.findById(userId))
+    @GetMapping("/{product}")
+    fun getById(@PathVariable productId: Long): ResponseEntity<ProductResponse> {
+        return ResponseEntity.ok().body(productService.findById(productId))
     }
 
     @PostMapping
-    fun save(@RequestBody @Valid userRequest: ProductRequest): ResponseEntity<HttpStatus> {
-        userService.save(userRequest)
+    fun save(@RequestBody @Valid productRequest: ProductRequest): ResponseEntity<HttpStatus> {
+        productService.save(productRequest)
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
     @GetMapping("/situation")
     fun getAllBySituation(@RequestParam situation: Status): ResponseEntity<List<ProductResponse>> {
-        return ResponseEntity.ok().body(userService.getAllActives(situation))
+        return ResponseEntity.ok().body(productService.getAllActives(situation))
     }
 
     @GetMapping("/filter")
     fun getFilter(
         @PageableDefault(sort = ["id"], direction = Sort.Direction.DESC, size = 10) page: Pageable,
         @RequestParam(required = false) id: Long?,
-        @RequestParam(required = false) name: String?,
-        @RequestParam(required = false) cpf: String?,
-        @RequestParam(required = false) email: String?,
+        @RequestParam(required = false) description: String?,
+        @RequestParam(required = false) code: String?,
         @RequestParam(required = false, defaultValue = "ACTIVE") active: Status,
     ): ResponseEntity<Page<ProductResponse>> {
-        return ResponseEntity.ok().body(userService.filter(page, id, name, cpf, email, active))
+        return ResponseEntity.ok().body(productService.filter(page, id, description, code, active))
     }
 
-    @PutMapping("/{userId}")
-    fun update(@PathVariable userId: Long, @RequestBody userRequest: ProductRequest): ResponseEntity<HttpStatus> {
-        userService.update(userId, userRequest)
+    @PutMapping("/{product}")
+    fun update(@PathVariable userId: Long, @RequestBody productRequest: ProductRequest): ResponseEntity<HttpStatus> {
+        productService.update(userId, productRequest)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
-    @PutMapping("/inactivate/{userId}")
-    fun inactivate(@PathVariable userId: Long): ResponseEntity<HttpStatus> {
-        userService.inactivate(userId)
+    @PutMapping("/inactivate/{product}")
+    fun inactivate(@PathVariable productId: Long): ResponseEntity<HttpStatus> {
+        productService.inactivate(productId)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
-    @PutMapping("/activate/{userId}")
-    fun activate(@PathVariable userId: Long): ResponseEntity<HttpStatus> {
-        userService.activate(userId)
+    @PutMapping("/activate/{product}")
+    fun activate(@PathVariable productId: Long): ResponseEntity<HttpStatus> {
+        productService.activate(productId)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 

@@ -8,8 +8,8 @@ import com.jvprojetos17.sale.extension.toResponse
 import com.jvprojetos17.sale.extension.toUser
 import com.jvprojetos17.sale.model.QUser
 import com.jvprojetos17.sale.repository.UserRepository
-import com.jvprojetos17.sale.request.UserRequest
-import com.jvprojetos17.sale.response.UserResponse
+import com.jvprojetos17.sale.request.ProductRequest
+import com.jvprojetos17.sale.response.ProductResponse
 import com.querydsl.core.BooleanBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -21,22 +21,22 @@ class UserService(
     @Autowired val userRepository: UserRepository
 ) {
 
-    fun findById(id: Long): UserResponse {
+    fun findById(id: Long): ProductResponse {
         return userRepository.findById(id)
             .orElseThrow { NotFoundException(Errors.S101.message.format(id), Errors.S101.code) }.toResponse()
     }
 
-    fun save(userRequest: UserRequest) {
+    fun save(userRequest: ProductRequest) {
         userRepository.save(userRequest.toUser())
     }
 
-    fun getAllActives(situation: Status): List<UserResponse> {
+    fun getAllActives(situation: Status): List<ProductResponse> {
         return userRepository.findByActive(situation).map { it.toResponse() }
     }
 
     fun filter(
         page: Pageable, id: Long?, name: String?, cpf: String?, email: String?, active: Status
-    ): Page<UserResponse> {
+    ): Page<ProductResponse> {
 
         val qUser: QUser = QUser.user
         val where = BooleanBuilder()
@@ -45,11 +45,12 @@ class UserService(
         name?.let { where.and(qUser.name.contains(it)) }
         cpf?.let { where.and(qUser.cpf.contains(it)) }
         email?.let { where.and(qUser.email.contains(it)) }
+        active.let { where.and(qUser.active.eq(it)) }
 
         return userRepository.findAll(where, page).let { it -> it.map { it.toResponse() } }
     }
 
-    fun update(userId: Long, userRequest: UserRequest) {
+    fun update(userId: Long, userRequest: ProductRequest) {
         findById(userId)
         userRequest.toUser().run {
             userRepository.save(

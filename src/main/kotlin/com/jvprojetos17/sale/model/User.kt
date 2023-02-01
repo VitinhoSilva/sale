@@ -16,17 +16,17 @@ data class User(
 
     @Column
     @Size(max = 255)
-    @NotEmpty(message = "Informe o nome do usuário!")
+    @NotEmpty(message = "Enter the user name!")
     var name: String,
 
     @Column
     @CPF
-    @NotEmpty(message = "Informe o cpf do usuário!")
+    @NotEmpty(message = "Enter the user cpf!")
     var cpf: String,
 
     @Column
     @Email
-    @NotEmpty(message = "Informe o e-mail do usuário!")
+    @NotEmpty(message = "Enter the user email!")
     var email: String,
 
     @Column

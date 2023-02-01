@@ -2,7 +2,7 @@ package com.jvprojetos17.sale.response
 
 import com.jvprojetos17.sale.enums.Status
 
-data class UserResponse (
+data class ProductResponse (
     var id: Long?,
     var name: String,
     var cpf: String,
