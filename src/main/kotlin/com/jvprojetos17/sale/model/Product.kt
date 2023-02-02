@@ -7,10 +7,10 @@ import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
 @Entity(name = "product")
-data class Product (
+data class Product(
 
     @Id
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
 
     @Column
@@ -33,5 +33,6 @@ data class Product (
     var stock: Int,
 
     @Column
+    @Enumerated(EnumType.ORDINAL)
     var active: Status = Status.ACTIVE
 )

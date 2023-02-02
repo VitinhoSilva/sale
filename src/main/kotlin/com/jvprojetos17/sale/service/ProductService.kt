@@ -4,8 +4,9 @@ import com.jvprojetos17.sale.enums.Errors
 import com.jvprojetos17.sale.enums.Status
 import com.jvprojetos17.sale.exception.BusinessException
 import com.jvprojetos17.sale.exception.NotFoundException
-import com.jvprojetos17.sale.extension.toProduct
+import com.jvprojetos17.sale.extension.toEntity
 import com.jvprojetos17.sale.extension.toResponse
+import com.jvprojetos17.sale.model.Product
 import com.jvprojetos17.sale.model.QProduct
 import com.jvprojetos17.sale.repository.ProductRepository
 import com.jvprojetos17.sale.request.ProductRequest
@@ -21,13 +22,18 @@ class ProductService(
     @Autowired val productRepository: ProductRepository
 ) {
 
-    fun findById(id: Long): ProductResponse {
+    fun findById(id: Long): Product {
         return productRepository.findById(id)
-            .orElseThrow { NotFoundException(Errors.S101.message.format(id), Errors.S101.code) }.toResponse()
+            .orElseThrow { NotFoundException(Errors.S204.message.format(id), Errors.S204.code) }
+    }
+
+    fun getById(id: Long): ProductResponse {
+        return productRepository.findById(id)
+            .orElseThrow { NotFoundException(Errors.S204.message.format(id), Errors.S204.code) }.toResponse()
     }
 
     fun save(productRequest: ProductRequest) {
-        productRepository.save(productRequest.toProduct())
+        productRepository.save(productRequest.toEntity())
     }
 
     fun getAllActives(situation: Status): List<ProductResponse> {
@@ -51,7 +57,7 @@ class ProductService(
 
     fun update(productId: Long, productRequest: ProductRequest) {
         findById(productId)
-        productRequest.toProduct().run {
+        productRequest.toEntity().run {
             productRepository.save(
                 copy(id = productId)
             )
@@ -59,9 +65,9 @@ class ProductService(
     }
 
     fun inactivate(productId: Long) {
-        findById(productId).toProduct().run {
+        findById(productId).run {
             if (active == Status.INACTIVE) {
-                throw BusinessException(Errors.S105.message.format(code), Errors.S105.code)
+                throw BusinessException(Errors.S205.message.format(code), Errors.S205.code)
             } else {
                 productRepository.save(copy(active = Status.INACTIVE))
             }
@@ -69,9 +75,9 @@ class ProductService(
     }
 
     fun activate(productId: Long) {
-        findById(productId).toProduct().run {
+        findById(productId).run {
             if (active == Status.ACTIVE) {
-                throw BusinessException(Errors.S106.message.format(code), Errors.S106.code)
+                throw BusinessException(Errors.S206.message.format(code), Errors.S206.code)
             } else {
                 productRepository.save(copy(active = Status.ACTIVE))
             }

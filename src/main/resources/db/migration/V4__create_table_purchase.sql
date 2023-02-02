@@ -4,4 +4,4 @@ CREATE TABLE purchase (
   total DECIMAL NOT NULL,
   createAt DATETIME NOT NULL,
   FOREIGN KEY (user_id) REFERENCES user (id)
-  );
+);

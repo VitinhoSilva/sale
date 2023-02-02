@@ -15,14 +15,14 @@ import java.util.*
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("users")
+@RequestMapping("/users")
 class UserController(
     val userService: UserService
 ) {
 
     @GetMapping("/{userId}")
     fun getById(@PathVariable userId: Long): ResponseEntity<UserResponse> {
-        return ResponseEntity.ok().body(userService.findById(userId))
+        return ResponseEntity.ok().body(userService.getById(userId))
     }
 
     @PostMapping

@@ -4,9 +4,10 @@ import com.jvprojetos17.sale.enums.Errors
 import com.jvprojetos17.sale.enums.Status
 import com.jvprojetos17.sale.exception.BusinessException
 import com.jvprojetos17.sale.exception.NotFoundException
+import com.jvprojetos17.sale.extension.toEntity
 import com.jvprojetos17.sale.extension.toResponse
-import com.jvprojetos17.sale.extension.toUser
 import com.jvprojetos17.sale.model.QUser
+import com.jvprojetos17.sale.model.User
 import com.jvprojetos17.sale.repository.UserRepository
 import com.jvprojetos17.sale.request.UserRequest
 import com.jvprojetos17.sale.response.UserResponse
@@ -21,13 +22,18 @@ class UserService(
     @Autowired val userRepository: UserRepository
 ) {
 
-    fun findById(id: Long): UserResponse {
+    fun findById(id: Long): User {
+        return userRepository.findById(id)
+            .orElseThrow { NotFoundException(Errors.S101.message.format(id), Errors.S101.code) }
+    }
+
+    fun getById(id: Long): UserResponse {
         return userRepository.findById(id)
             .orElseThrow { NotFoundException(Errors.S101.message.format(id), Errors.S101.code) }.toResponse()
     }
 
     fun save(userRequest: UserRequest) {
-        userRepository.save(userRequest.toUser())
+        userRepository.save(userRequest.toEntity())
     }
 
     fun getAllActives(situation: Status): List<UserResponse> {
@@ -52,7 +58,7 @@ class UserService(
 
     fun update(userId: Long, userRequest: UserRequest) {
         findById(userId)
-        userRequest.toUser().run {
+        userRequest.toEntity().run {
             userRepository.save(
                 copy(id = userId)
             )
@@ -60,7 +66,7 @@ class UserService(
     }
 
     fun inactivate(userId: Long) {
-        findById(userId).toUser().run {
+        findById(userId).run {
             if (active == Status.INACTIVE) {
                 throw BusinessException(Errors.S102.message.format(email), Errors.S102.code)
             } else {
@@ -70,7 +76,7 @@ class UserService(
     }
 
     fun activate(userId: Long) {
-        findById(userId).toUser().run {
+        findById(userId).run {
             if (active == Status.ACTIVE) {
                 throw BusinessException(Errors.S103.message.format(email), Errors.S103.code)
             } else {

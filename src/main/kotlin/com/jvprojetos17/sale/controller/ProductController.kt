@@ -15,14 +15,14 @@ import java.util.*
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("product")
+@RequestMapping("/product")
 class ProductController(
     val productService: ProductService
 ) {
 
-    @GetMapping("/{product}")
+    @GetMapping("/{productId}")
     fun getById(@PathVariable productId: Long): ResponseEntity<ProductResponse> {
-        return ResponseEntity.ok().body(productService.findById(productId))
+        return ResponseEntity.ok().body(productService.getById(productId))
     }
 
     @PostMapping
@@ -47,19 +47,19 @@ class ProductController(
         return ResponseEntity.ok().body(productService.filter(page, id, description, code, active))
     }
 
-    @PutMapping("/{product}")
-    fun update(@PathVariable userId: Long, @RequestBody productRequest: ProductRequest): ResponseEntity<HttpStatus> {
-        productService.update(userId, productRequest)
+    @PutMapping("/{productId}")
+    fun update(@PathVariable productId: Long, @RequestBody productRequest: ProductRequest): ResponseEntity<HttpStatus> {
+        productService.update(productId, productRequest)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
-    @PutMapping("/inactivate/{product}")
+    @PutMapping("/inactivate/{productId}")
     fun inactivate(@PathVariable productId: Long): ResponseEntity<HttpStatus> {
         productService.inactivate(productId)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
-    @PutMapping("/activate/{product}")
+    @PutMapping("/activate/{productId}")
     fun activate(@PathVariable productId: Long): ResponseEntity<HttpStatus> {
         productService.activate(productId)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()

@@ -1,8 +1,8 @@
 package com.jvprojetos17.sale.exception
 
+import com.jvprojetos17.sale.enums.Errors
 import com.jvprojetos17.sale.response.ErrorResponse
 import com.jvprojetos17.sale.response.FieldErrorResponse
-import com.jvprojetos17.sale.enums.Errors
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -38,7 +38,10 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleMethodArgumentNotValidException(ex: MethodArgumentNotValidException, request: WebRequest): ResponseEntity<ErrorResponse> {
+    fun handleMethodArgumentNotValidException(
+        ex: MethodArgumentNotValidException,
+        request: WebRequest
+    ): ResponseEntity<ErrorResponse> {
         val error = ErrorResponse(
             HttpStatus.UNPROCESSABLE_ENTITY.value(),
             Errors.S001.message,
@@ -56,6 +59,21 @@ class GlobalExceptionHandler {
             ex.message,
             ex.errorCode,
             null
+        )
+
+        return ResponseEntity(error, HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(StockNotAvailableException::class)
+    fun handleStockNotAvailableException(
+        ex: StockNotAvailableException,
+        request: WebRequest
+    ): ResponseEntity<ErrorResponse> {
+        val error = ErrorResponse(
+            HttpStatus.BAD_REQUEST.value(),
+            ex.message,
+            ex.errorCode,
+            ex.productsNotAvailable.map { FieldErrorResponse("Product id: $it") }
         )
 
         return ResponseEntity(error, HttpStatus.BAD_REQUEST)

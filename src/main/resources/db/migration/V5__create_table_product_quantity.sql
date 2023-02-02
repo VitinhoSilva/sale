@@ -1,4 +1,4 @@
-CREATE TABLE purchase_product (
+CREATE TABLE product_quantity (
   id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   purchase_id BIGINT(20) NOT NULL,
   product_id BIGINT(20) NOT NULL,

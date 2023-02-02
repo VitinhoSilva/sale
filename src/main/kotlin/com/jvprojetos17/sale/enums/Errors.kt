@@ -3,10 +3,17 @@ package com.jvprojetos17.sale.enums
 enum class Errors(val code: String, val message: String) {
 
     S001("S-001", "Invalid Request!"),
-    S101("S-001", "User with id: [%s] not found!"),
+
+    S101("S-101", "User with id: [%s] not found!"),
     S102("S-102", "User with email: [%s] is already inactive!"),
     S103("S-103", "User with email: [%s] is already active!"),
-    S104("S-104", "Product with id: [%s] not found!"),
-    S105("S-105", "Product with code: [%s] is already inactive!"),
-    S106("S-106", "Product with code: [%s] is already active!"),
+
+    S204("S-204", "Product with id: [%s] not found!"),
+    S205("S-205", "Product with code: [%s] is already inactive!"),
+    S206("S-206", "Product with code: [%s] is already active!"),
+    S207("S-207", "Product don't have enough stock!"),
+
+    S307("S-307", "Purchase with id: [%s] not found!"),
+    S308("S-308", "Purchase with code: [%s] is already canceled!"),
+
 }

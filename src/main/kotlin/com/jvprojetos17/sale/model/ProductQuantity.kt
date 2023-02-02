@@ -4,8 +4,8 @@ import javax.persistence.*
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
 
-@Entity(name = "purchase_product")
-data class PurchaseProduct (
+@Entity(name = "product_quantity")
+data class ProductQuantity(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

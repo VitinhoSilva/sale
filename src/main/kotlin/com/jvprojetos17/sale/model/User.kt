@@ -30,6 +30,7 @@ data class User(
     var email: String,
 
     @Column
+    @Enumerated(EnumType.ORDINAL)
     var active: Status = Status.ACTIVE
 
 )

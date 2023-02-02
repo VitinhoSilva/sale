@@ -1,24 +1,28 @@
 package com.jvprojetos17.sale.extension
 
 import com.jvprojetos17.sale.model.Product
+import com.jvprojetos17.sale.model.ProductQuantity
+import com.jvprojetos17.sale.model.Purchase
 import com.jvprojetos17.sale.model.User
 import com.jvprojetos17.sale.request.ProductRequest
 import com.jvprojetos17.sale.request.UserRequest
+import com.jvprojetos17.sale.response.ProductQuantityResponse
 import com.jvprojetos17.sale.response.ProductResponse
+import com.jvprojetos17.sale.response.PurchaseResponse
 import com.jvprojetos17.sale.response.UserResponse
 
 
 fun User.toResponse(): UserResponse {
     return UserResponse(
-        id = id,
-        name = name,
-        cpf = cpf,
-        email = email,
-        active = active
+        id = this.id,
+        name = this.name,
+        cpf = this.cpf,
+        email = this.email,
+        active = this.active
     )
 }
 
-fun UserResponse.toUser(): User {
+fun UserResponse.toEntity(): User {
     return User(
         id = this.id,
         name = this.name,
@@ -28,7 +32,7 @@ fun UserResponse.toUser(): User {
     )
 }
 
-fun UserRequest.toUser(): User {
+fun UserRequest.toEntity(): User {
     return User(
         name = this.name,
         cpf = this.cpf,
@@ -47,22 +51,39 @@ fun Product.toResponse(): ProductResponse {
     )
 }
 
-fun ProductResponse.toProduct(): Product {
-    return Product(
+fun Product.toResponseBasic(): ProductResponse {
+    return ProductResponse(
         id = this.id,
         description = this.description,
         code = this.code,
-        price = this.price,
-        stock = this.stock,
-        active = this.active
+        price = this.price
     )
 }
 
-fun ProductRequest.toProduct(): Product {
+fun ProductRequest.toEntity(): Product {
     return Product(
         description = this.description,
         code = this.code,
         price = this.price,
         stock = this.stock,
+    )
+}
+
+fun ProductQuantity.toResponse(): ProductQuantityResponse {
+    return ProductQuantityResponse(
+        id = this.id,
+        product = this.product.toResponseBasic(),
+        quantity = this.quantity
+    )
+}
+
+fun Purchase.toResponse(): PurchaseResponse {
+    return PurchaseResponse(
+        id = this.id,
+        user = this.user.toResponse(),
+        products = this.products.map { it.toResponse() },
+        total = this.total,
+        situation = this.situation,
+        createAt = this.createAt
     )
 }

@@ -1,5 +1,6 @@
 package com.jvprojetos17.sale.model
 
+import com.jvprojetos17.sale.enums.Situation
 import java.time.LocalDate
 import javax.persistence.*
 import javax.validation.constraints.NotEmpty
@@ -18,11 +19,15 @@ data class Purchase(
     var user: User,
 
     @NotEmpty(message = "Informe o produto")
-    @OneToMany(mappedBy = "purchase")
-    var products: List<PurchaseProduct>,
+    @OneToMany(mappedBy = "purchase", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    var products: List<ProductQuantity> = listOf(),
 
     @Column
     var total: Double,
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    var situation: Situation = Situation.CONFIRMED,
 
     @Column
     var createAt: LocalDate = LocalDate.now()

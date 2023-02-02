@@ -1,0 +1,1 @@
+ALTER TABLE purchase MODIFY COLUMN total DOUBLE;
