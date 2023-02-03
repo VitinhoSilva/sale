@@ -11,12 +11,12 @@ data class ProductQuantity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
 
-    @ManyToOne
+    @ManyToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "purchase_id")
     @NotEmpty
     var purchase: Purchase,
 
-    @ManyToOne
+    @ManyToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "product_id")
     @NotEmpty
     var product: Product,
@@ -24,4 +24,4 @@ data class ProductQuantity(
     @NotNull(message = "Informe a quantidade!")
     var quantity: Int,
 
-)
+    )

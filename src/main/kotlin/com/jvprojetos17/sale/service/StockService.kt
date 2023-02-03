@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class StockService(
-    @Autowired val stockRepository: StockRepository
+    private val stockRepository: StockRepository
 ) {
 
     fun isAvailableStockByProductAndQuantity(productId: Long, quantityId: Int): Boolean {

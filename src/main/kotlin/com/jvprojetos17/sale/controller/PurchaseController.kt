@@ -11,7 +11,7 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/purchase")
 class PurchaseController(
-    val purchaseService: PurchaseService
+    private val purchaseService: PurchaseService
 ) {
     @GetMapping("/{purchaseId}")
     fun getById(@PathVariable purchaseId: Long): ResponseEntity<PurchaseResponse> {

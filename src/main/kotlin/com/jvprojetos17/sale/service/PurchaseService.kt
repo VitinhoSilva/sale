@@ -9,17 +9,22 @@ import com.jvprojetos17.sale.repository.PurchaseRepository
 import com.jvprojetos17.sale.request.ProductQuantityRequest
 import com.jvprojetos17.sale.request.PurchaseRequest
 import com.jvprojetos17.sale.response.PurchaseResponse
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
 class PurchaseService(
-    @Autowired val purchaseRepository: PurchaseRepository,
-    @Autowired val stockService: StockService,
-    @Autowired val userService: UserService,
-    @Autowired val productService: ProductService,
-    @Autowired val productQuantityService: ProductQuantityService
+    private val purchaseRepository: PurchaseRepository,
+    private val stockService: StockService,
+    private val userService: UserService,
+    private val productService: ProductService,
+    private val productQuantityService: ProductQuantityService
 ) {
+
+    fun getById(id: Long): Purchase {
+        return purchaseRepository.findById(id)
+            .orElseThrow { NotFoundException(Errors.S307.message.format(id), Errors.S307.code) }
+    }
+
     fun findById(id: Long): PurchaseResponse {
         return purchaseRepository.findById(id)
             .orElseThrow { NotFoundException(Errors.S307.message.format(id), Errors.S307.code) }.toResponse()

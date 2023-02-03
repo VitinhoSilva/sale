@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class ProductService(
-    @Autowired val productRepository: ProductRepository
+    private val productRepository: ProductRepository
 ) {
 
     fun findById(id: Long): Product {
