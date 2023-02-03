@@ -14,18 +14,17 @@ import org.springframework.stereotype.Service
 @Service
 class PurchaseService(
     private val purchaseRepository: PurchaseRepository,
-    private val stockService: StockService,
     private val userService: UserService,
     private val productService: ProductService,
     private val productQuantityService: ProductQuantityService
 ) {
 
-    fun getById(id: Long): Purchase {
+    fun findById(id: Long): Purchase {
         return purchaseRepository.findById(id)
             .orElseThrow { NotFoundException(Errors.S307.message.format(id), Errors.S307.code) }
     }
 
-    fun findById(id: Long): PurchaseResponse {
+    fun getById(id: Long): PurchaseResponse {
         return purchaseRepository.findById(id)
             .orElseThrow { NotFoundException(Errors.S307.message.format(id), Errors.S307.code) }.toResponse()
     }
@@ -38,7 +37,7 @@ class PurchaseService(
         val productsCodeNotAvailable = mutableListOf<Long>()
 
         purchaseRequest.productsAndQuantity.forEach {
-            if (!stockService.isAvailableStockByProductAndQuantity(it.productId, it.quantity)) {
+            if (!productService.isAvailableStockByProductAndQuantity(it.productId, it.quantity)) {
                 productsCodeNotAvailable.add(it.productId)
             }
         }
@@ -49,13 +48,8 @@ class PurchaseService(
     }
 
     fun save(purchaseRequest: PurchaseRequest) {
-        //1 - verificar se usuário existe - OK
-        //2 - verificar se os produtos existem e estão disponíveis na quantidade suficientes para esta compra - OK
-        //3 - Calcular total de cada produto * quantidade de cada - OK
-        //4 - Salvar compra com situação: CONFIRMED quando tudo ocorrer bem - OK
-        //5 - Dar baixa no stock deste produto -
-
         checkProductsAvailability(purchaseRequest)
+        
         val user = userService.findById(purchaseRequest.userId)
         val total = calculateTotalPurchaseByProductPrice(purchaseRequest.productsAndQuantity)
         val purchase = Purchase(
@@ -67,7 +61,14 @@ class PurchaseService(
             productQuantityService.setListProductAndQuantity(purchase, purchaseRequest.productsAndQuantity)
 
         purchaseRepository.save(purchase)
+        purchaseRequest.productsAndQuantity.map { productService.lowInStock(it.productId, it.quantity) }
 
+    }
+
+    fun getByUserId(userId: Long): List<PurchaseResponse> {
+        return purchaseRepository.findByUserId(userId).run {
+            this.map { it.toResponse() }
+        }
     }
 
 }

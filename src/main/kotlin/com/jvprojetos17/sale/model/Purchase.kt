@@ -19,7 +19,7 @@ data class Purchase(
     var user: User,
 
     @NotEmpty(message = "Informe o produto")
-    @OneToMany(mappedBy = "purchase", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @OneToMany(mappedBy = "purchase", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     var products: List<ProductQuantity> = listOf(),
 
     @Column

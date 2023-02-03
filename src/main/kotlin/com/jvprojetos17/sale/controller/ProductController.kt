@@ -2,6 +2,7 @@ package com.jvprojetos17.sale.controller
 
 import com.jvprojetos17.sale.enums.Status
 import com.jvprojetos17.sale.request.ProductRequest
+import com.jvprojetos17.sale.request.ProductStockRequest
 import com.jvprojetos17.sale.response.ProductResponse
 import com.jvprojetos17.sale.service.ProductService
 import org.springframework.data.domain.Page
@@ -62,6 +63,12 @@ class ProductController(
     @PutMapping("/activate/{productId}")
     fun activate(@PathVariable productId: Long): ResponseEntity<HttpStatus> {
         productService.activate(productId)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
+
+    @PutMapping("/add-stock")
+    fun addStock(@RequestBody @Valid productStockRequestList: ProductStockRequest): ResponseEntity<HttpStatus> {
+        productService.addStock(productStockRequestList)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 

@@ -10,9 +10,9 @@ import com.jvprojetos17.sale.model.Product
 import com.jvprojetos17.sale.model.QProduct
 import com.jvprojetos17.sale.repository.ProductRepository
 import com.jvprojetos17.sale.request.ProductRequest
+import com.jvprojetos17.sale.request.ProductStockRequest
 import com.jvprojetos17.sale.response.ProductResponse
 import com.querydsl.core.BooleanBuilder
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -83,4 +83,23 @@ class ProductService(
             }
         }
     }
+
+    fun isAvailableStockByProductAndQuantity(productId: Long, quantityId: Int): Boolean {
+        return productRepository.checkAvailableStockByProductAndQuantity(productId, quantityId)
+    }
+
+    fun lowInStock(productId: Long, quantityId: Int) {
+        findById(productId).run {
+            productRepository.save(copy(stock = stock - quantityId))
+        }
+    }
+
+    fun addStock(productStockRequest: ProductStockRequest) {
+        productStockRequest.productsAndQuantity.map {
+            findById(it.productId).run {
+                productRepository.save(copy(stock = stock + it.quantity))
+            }
+        }
+    }
+
 }

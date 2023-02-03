@@ -13,15 +13,21 @@ import javax.validation.Valid
 class PurchaseController(
     private val purchaseService: PurchaseService
 ) {
+
     @GetMapping("/{purchaseId}")
     fun getById(@PathVariable purchaseId: Long): ResponseEntity<PurchaseResponse> {
-        return ResponseEntity.ok().body(purchaseService.findById(purchaseId))
+        return ResponseEntity.ok().body(purchaseService.getById(purchaseId))
     }
 
     @PostMapping
     fun save(@RequestBody @Valid purchaseRequest: PurchaseRequest): ResponseEntity<HttpStatus> {
         purchaseService.save(purchaseRequest)
         return ResponseEntity.status(HttpStatus.CREATED).build()
+    }
+
+    @GetMapping("/user/{userId}")
+    fun getByUserId(@PathVariable userId: Long): ResponseEntity<List<PurchaseResponse>> {
+        return ResponseEntity.status(HttpStatus.OK).body(purchaseService.getByUserId(userId))
     }
 
 }

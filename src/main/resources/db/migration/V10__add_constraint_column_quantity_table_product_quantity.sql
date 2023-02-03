@@ -1,0 +1,1 @@
+ALTER TABLE product_quantity ADD CONSTRAINT CHECK (quantity > 0);

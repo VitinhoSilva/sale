@@ -1,12 +1,14 @@
 package com.jvprojetos17.sale.request
 
-import javax.validation.constraints.NotEmpty
+import javax.validation.constraints.Min
+import javax.validation.constraints.NotNull
 
 data class ProductQuantityRequest(
 
-    @field:NotEmpty(message = "Product id must be informed!")
+    @field:NotNull(message = "Product id must be informed!")
     var productId: Long,
 
-    @field:NotEmpty(message = "Quantity id must be informed!")
-    var quantity: Int,
+    @field:NotNull(message = "Quantity must be informed!")
+    @field:Min(value = 1)
+    var quantity: Int
 )
