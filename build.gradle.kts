@@ -22,6 +22,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.flywaydb:flyway-core:7.7.0")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -33,6 +34,8 @@ dependencies {
 	compile("com.querydsl:querydsl-core:5.0.0.M1")
 	kapt("com.querydsl:querydsl-apt:5.0.0:jpa")
 	annotationProcessor(group = "com.querydsl", name = "querydsl-apt", classifier = "jpa")
+	implementation("io.springfox:springfox-swagger2:2.9.2")
+	implementation("io.springfox:springfox-swagger-ui:2.9.2")
 }
 
 tasks.withType<KotlinCompile> {

@@ -12,4 +12,7 @@ data class UserRequest(
 
     @field:NotEmpty(message = "Email must be informed!")
     var email: String,
+
+    @field:NotEmpty(message = "Password must be informed!")
+    var password: String,
 )

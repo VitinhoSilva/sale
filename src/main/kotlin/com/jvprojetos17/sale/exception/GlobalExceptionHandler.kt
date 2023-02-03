@@ -1,6 +1,6 @@
 package com.jvprojetos17.sale.exception
 
-import com.jvprojetos17.sale.enums.Errors
+import com.jvprojetos17.sale.enums.Error
 import com.jvprojetos17.sale.response.ErrorResponse
 import com.jvprojetos17.sale.response.FieldErrorResponse
 import org.springframework.http.HttpStatus
@@ -44,8 +44,8 @@ class GlobalExceptionHandler {
     ): ResponseEntity<ErrorResponse> {
         val error = ErrorResponse(
             HttpStatus.UNPROCESSABLE_ENTITY.value(),
-            Errors.S001.message,
-            Errors.S001.code,
+            Error.S001.message,
+            Error.S001.code,
             ex.bindingResult.fieldErrors.map { FieldErrorResponse(it.defaultMessage ?: "invalid", it.field) }
         )
 

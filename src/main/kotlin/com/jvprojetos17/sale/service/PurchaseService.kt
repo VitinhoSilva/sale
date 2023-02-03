@@ -1,6 +1,6 @@
 package com.jvprojetos17.sale.service
 
-import com.jvprojetos17.sale.enums.Errors
+import com.jvprojetos17.sale.enums.Error
 import com.jvprojetos17.sale.exception.NotFoundException
 import com.jvprojetos17.sale.exception.StockNotAvailableException
 import com.jvprojetos17.sale.extension.toResponse
@@ -21,12 +21,12 @@ class PurchaseService(
 
     fun findById(id: Long): Purchase {
         return purchaseRepository.findById(id)
-            .orElseThrow { NotFoundException(Errors.S307.message.format(id), Errors.S307.code) }
+            .orElseThrow { NotFoundException(Error.S307.message.format(id), Error.S307.code) }
     }
 
     fun getById(id: Long): PurchaseResponse {
         return purchaseRepository.findById(id)
-            .orElseThrow { NotFoundException(Errors.S307.message.format(id), Errors.S307.code) }.toResponse()
+            .orElseThrow { NotFoundException(Error.S307.message.format(id), Error.S307.code) }.toResponse()
     }
 
     fun calculateTotalPurchaseByProductPrice(productsAndQuantity: List<ProductQuantityRequest>): Double {
@@ -43,7 +43,7 @@ class PurchaseService(
         }
 
         if (productsCodeNotAvailable.size > 0) {
-            throw StockNotAvailableException(Errors.S207.message, Errors.S207.code, productsCodeNotAvailable)
+            throw StockNotAvailableException(Error.S207.message, Error.S207.code, productsCodeNotAvailable)
         }
     }
 

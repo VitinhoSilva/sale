@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UserRepository : JpaRepository<User, Long>, QuerydslPredicateExecutor<User> {
     fun findByActive(active: Status): Set<User>
+    fun findByCpf(cpf: String): User?
 }

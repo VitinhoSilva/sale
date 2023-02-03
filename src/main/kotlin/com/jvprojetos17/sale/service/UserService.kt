@@ -1,6 +1,7 @@
 package com.jvprojetos17.sale.service
 
-import com.jvprojetos17.sale.enums.Errors
+import com.jvprojetos17.sale.enums.Error
+import com.jvprojetos17.sale.enums.Profile
 import com.jvprojetos17.sale.enums.Status
 import com.jvprojetos17.sale.exception.BusinessException
 import com.jvprojetos17.sale.exception.NotFoundException
@@ -14,25 +15,35 @@ import com.jvprojetos17.sale.response.UserResponse
 import com.querydsl.core.BooleanBuilder
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
 class UserService(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val bCrypt: BCryptPasswordEncoder
 ) {
 
     fun findById(id: Long): User {
         return userRepository.findById(id)
-            .orElseThrow { NotFoundException(Errors.S101.message.format(id), Errors.S101.code) }
+            .orElseThrow { NotFoundException(Error.S101.message.format(id), Error.S101.code) }
     }
 
     fun getById(id: Long): UserResponse {
         return userRepository.findById(id)
-            .orElseThrow { NotFoundException(Errors.S101.message.format(id), Errors.S101.code) }.toResponse()
+            .orElseThrow { NotFoundException(Error.S101.message.format(id), Error.S101.code) }.toResponse()
     }
 
     fun save(userRequest: UserRequest) {
-        userRepository.save(userRequest.toEntity())
+        userRequest.toEntity().run {
+            userRepository.save(
+                copy(
+                    profiles = setOf(Profile.CUSTOMER),
+                    password = bCrypt.encode(userRequest.password)
+                )
+            )
+        }
+
     }
 
     fun getAllActives(situation: Status): List<UserResponse> {
@@ -67,7 +78,7 @@ class UserService(
     fun inactivate(userId: Long) {
         findById(userId).run {
             if (active == Status.INACTIVE) {
-                throw BusinessException(Errors.S102.message.format(email), Errors.S102.code)
+                throw BusinessException(Error.S102.message.format(email), Error.S102.code)
             } else {
                 userRepository.save(copy(active = Status.INACTIVE))
             }
@@ -77,10 +88,11 @@ class UserService(
     fun activate(userId: Long) {
         findById(userId).run {
             if (active == Status.ACTIVE) {
-                throw BusinessException(Errors.S103.message.format(email), Errors.S103.code)
+                throw BusinessException(Error.S103.message.format(email), Error.S103.code)
             } else {
                 userRepository.save(copy(active = Status.ACTIVE))
             }
         }
     }
+
 }

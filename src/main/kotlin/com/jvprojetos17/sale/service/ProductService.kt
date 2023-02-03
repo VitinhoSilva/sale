@@ -1,6 +1,6 @@
 package com.jvprojetos17.sale.service
 
-import com.jvprojetos17.sale.enums.Errors
+import com.jvprojetos17.sale.enums.Error
 import com.jvprojetos17.sale.enums.Status
 import com.jvprojetos17.sale.exception.BusinessException
 import com.jvprojetos17.sale.exception.NotFoundException
@@ -24,12 +24,12 @@ class ProductService(
 
     fun findById(id: Long): Product {
         return productRepository.findById(id)
-            .orElseThrow { NotFoundException(Errors.S204.message.format(id), Errors.S204.code) }
+            .orElseThrow { NotFoundException(Error.S204.message.format(id), Error.S204.code) }
     }
 
     fun getById(id: Long): ProductResponse {
         return productRepository.findById(id)
-            .orElseThrow { NotFoundException(Errors.S204.message.format(id), Errors.S204.code) }.toResponse()
+            .orElseThrow { NotFoundException(Error.S204.message.format(id), Error.S204.code) }.toResponse()
     }
 
     fun save(productRequest: ProductRequest) {
@@ -67,7 +67,7 @@ class ProductService(
     fun inactivate(productId: Long) {
         findById(productId).run {
             if (active == Status.INACTIVE) {
-                throw BusinessException(Errors.S205.message.format(code), Errors.S205.code)
+                throw BusinessException(Error.S205.message.format(code), Error.S205.code)
             } else {
                 productRepository.save(copy(active = Status.INACTIVE))
             }
@@ -77,7 +77,7 @@ class ProductService(
     fun activate(productId: Long) {
         findById(productId).run {
             if (active == Status.ACTIVE) {
-                throw BusinessException(Errors.S206.message.format(code), Errors.S206.code)
+                throw BusinessException(Error.S206.message.format(code), Error.S206.code)
             } else {
                 productRepository.save(copy(active = Status.ACTIVE))
             }

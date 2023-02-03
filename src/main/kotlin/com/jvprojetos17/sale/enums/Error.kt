@@ -1,6 +1,6 @@
 package com.jvprojetos17.sale.enums
 
-enum class Errors(val code: String, val message: String) {
+enum class Error(val code: String, val message: String) {
 
     S001("S-001", "Invalid Request!"),
 

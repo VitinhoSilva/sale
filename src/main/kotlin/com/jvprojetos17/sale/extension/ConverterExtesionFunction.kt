@@ -22,21 +22,12 @@ fun User.toResponse(): UserResponse {
     )
 }
 
-fun UserResponse.toEntity(): User {
-    return User(
-        id = this.id,
-        name = this.name,
-        cpf = this.cpf,
-        email = this.email,
-        active = this.active
-    )
-}
-
 fun UserRequest.toEntity(): User {
     return User(
         name = this.name,
         cpf = this.cpf,
         email = this.email,
+        password = this.password,
     )
 }
 
