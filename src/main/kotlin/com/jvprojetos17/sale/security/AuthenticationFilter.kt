@@ -14,7 +14,8 @@ import javax.servlet.http.HttpServletResponse
 
 class AuthenticationFilter(
     authenticationManager: AuthenticationManager,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val jwtUtil: JwtUtil
 ) : UsernamePasswordAuthenticationFilter(authenticationManager) {
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
@@ -24,7 +25,7 @@ class AuthenticationFilter(
             val authToken = UsernamePasswordAuthenticationToken(id, loginRequest.password)
             return authenticationManager.authenticate(authToken)
         } catch (ex: Exception) {
-            throw AuthenticationException("Falha ao autenticar: ", "999")
+            throw AuthenticationException("Falha ao autenticar", "999")
         }
     }
 
@@ -35,8 +36,8 @@ class AuthenticationFilter(
         authResult: Authentication
     ) {
         val id = (authResult.principal as UserCustomDetails).id
-
-        response.addHeader("Authorization", "123456")
+        val token = id.let { jwtUtil.generateToken(it) }
+        response.addHeader("Authorization", "Bearer $token")
     }
 
 }

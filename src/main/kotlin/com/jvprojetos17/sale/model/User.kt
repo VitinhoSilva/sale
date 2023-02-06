@@ -36,9 +36,9 @@ data class User(
     var password: String,
 
     @Column(name = "profile")
-    @CollectionTable(name = "user_profile", joinColumns = [JoinColumn(name = "user_id")])
-    @ElementCollection(targetClass = Profile::class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
+    @ElementCollection(targetClass = Profile::class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_profile", joinColumns = [JoinColumn(name = "user_id")])
     var profiles: Set<Profile> = setOf(),
 
     @Column

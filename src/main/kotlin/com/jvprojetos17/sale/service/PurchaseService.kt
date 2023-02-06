@@ -49,7 +49,7 @@ class PurchaseService(
 
     fun save(purchaseRequest: PurchaseRequest) {
         checkProductsAvailability(purchaseRequest)
-        
+
         val user = userService.findById(purchaseRequest.userId)
         val total = calculateTotalPurchaseByProductPrice(purchaseRequest.productsAndQuantity)
         val purchase = Purchase(

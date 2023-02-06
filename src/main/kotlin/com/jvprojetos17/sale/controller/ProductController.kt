@@ -1,5 +1,7 @@
 package com.jvprojetos17.sale.controller
 
+import com.jvprojetos17.sale.anotationCustom.PermissionAdmin
+import com.jvprojetos17.sale.anotationCustom.PermissionAdminOrCustomer
 import com.jvprojetos17.sale.enums.Status
 import com.jvprojetos17.sale.request.ProductRequest
 import com.jvprojetos17.sale.request.ProductStockRequest
@@ -18,26 +20,30 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/product")
 class ProductController(
-    val productService: ProductService
+    private val productService: ProductService
 ) {
 
     @GetMapping("/{productId}")
+    @PermissionAdminOrCustomer
     fun getById(@PathVariable productId: Long): ResponseEntity<ProductResponse> {
         return ResponseEntity.ok().body(productService.getById(productId))
     }
 
     @PostMapping
+    @PermissionAdmin
     fun save(@RequestBody @Valid productRequest: ProductRequest): ResponseEntity<HttpStatus> {
         productService.save(productRequest)
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
     @GetMapping("/situation")
+    @PermissionAdmin
     fun getAllBySituation(@RequestParam situation: Status): ResponseEntity<List<ProductResponse>> {
         return ResponseEntity.ok().body(productService.getAllActives(situation))
     }
 
     @GetMapping("/filter")
+    @PermissionAdminOrCustomer
     fun getFilter(
         @PageableDefault(sort = ["id"], direction = Sort.Direction.DESC, size = 10) page: Pageable,
         @RequestParam(required = false) id: Long?,
@@ -49,24 +55,28 @@ class ProductController(
     }
 
     @PutMapping("/{productId}")
+    @PermissionAdmin
     fun update(@PathVariable productId: Long, @RequestBody productRequest: ProductRequest): ResponseEntity<HttpStatus> {
         productService.update(productId, productRequest)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
     @PutMapping("/inactivate/{productId}")
+    @PermissionAdmin
     fun inactivate(@PathVariable productId: Long): ResponseEntity<HttpStatus> {
         productService.inactivate(productId)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
     @PutMapping("/activate/{productId}")
+    @PermissionAdmin
     fun activate(@PathVariable productId: Long): ResponseEntity<HttpStatus> {
         productService.activate(productId)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
     @PutMapping("/add-stock")
+    @PermissionAdmin
     fun addStock(@RequestBody @Valid productStockRequestList: ProductStockRequest): ResponseEntity<HttpStatus> {
         productService.addStock(productStockRequestList)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
