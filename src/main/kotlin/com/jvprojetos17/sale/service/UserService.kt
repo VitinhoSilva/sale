@@ -67,7 +67,6 @@ class UserService(
     }
 
     fun update(userId: Long, userRequest: UserRequest) {
-        findById(userId)
         userRequest.toEntity().run {
             userRepository.save(
                 copy(id = userId)
@@ -77,9 +76,7 @@ class UserService(
 
     fun inactivate(userId: Long) {
         findById(userId).run {
-            if (active == Status.INACTIVE) {
-                throw BusinessException(Error.S102.message.format(email), Error.S102.code)
-            } else {
+            if (active != Status.INACTIVE) {
                 userRepository.save(copy(active = Status.INACTIVE))
             }
         }
@@ -87,12 +84,9 @@ class UserService(
 
     fun activate(userId: Long) {
         findById(userId).run {
-            if (active == Status.ACTIVE) {
-                throw BusinessException(Error.S103.message.format(email), Error.S103.code)
-            } else {
+            if (active != Status.ACTIVE) {
                 userRepository.save(copy(active = Status.ACTIVE))
             }
         }
     }
-
 }

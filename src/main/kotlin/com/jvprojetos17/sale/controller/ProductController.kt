@@ -14,7 +14,6 @@ import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.util.*
 import javax.validation.Valid
 
 @RestController
@@ -38,7 +37,7 @@ class ProductController(
 
     @GetMapping("/situation")
     @PermissionAdmin
-    fun getAllBySituation(@RequestParam situation: Status): ResponseEntity<List<ProductResponse>> {
+    fun getAllByActive(@RequestParam situation: Status): ResponseEntity<List<ProductResponse>> {
         return ResponseEntity.ok().body(productService.getAllActives(situation))
     }
 
@@ -61,21 +60,21 @@ class ProductController(
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
-    @PutMapping("/inactivate/{productId}")
+    @PatchMapping("/{productId}/inactivate")
     @PermissionAdmin
     fun inactivate(@PathVariable productId: Long): ResponseEntity<HttpStatus> {
         productService.inactivate(productId)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
-    @PutMapping("/activate/{productId}")
+    @PatchMapping("/{productId}/activate")
     @PermissionAdmin
     fun activate(@PathVariable productId: Long): ResponseEntity<HttpStatus> {
         productService.activate(productId)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
-    @PutMapping("/add-stock")
+    @PatchMapping("/add-stock")
     @PermissionAdmin
     fun addStock(@RequestBody @Valid productStockRequestList: ProductStockRequest): ResponseEntity<HttpStatus> {
         productService.addStock(productStockRequestList)

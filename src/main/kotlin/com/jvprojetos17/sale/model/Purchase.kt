@@ -2,9 +2,21 @@ package com.jvprojetos17.sale.model
 
 import com.jvprojetos17.sale.enums.Situation
 import java.time.LocalDate
-import javax.persistence.*
+import javax.persistence.CascadeType
+import javax.persistence.Column
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
+import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
+import javax.persistence.FetchType
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
+import javax.persistence.OneToMany
+
 
 @Entity(name = "purchase")
 data class Purchase(

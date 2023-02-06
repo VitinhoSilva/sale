@@ -1,8 +1,15 @@
 package com.jvprojetos17.sale.model
 
-import javax.persistence.*
+import javax.persistence.CascadeType
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
+
 
 @Entity(name = "product_quantity")
 data class ProductQuantity(

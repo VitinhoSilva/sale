@@ -66,9 +66,7 @@ class ProductService(
 
     fun inactivate(productId: Long) {
         findById(productId).run {
-            if (active == Status.INACTIVE) {
-                throw BusinessException(Error.S205.message.format(code), Error.S205.code)
-            } else {
+            if (active != Status.INACTIVE) {
                 productRepository.save(copy(active = Status.INACTIVE))
             }
         }
@@ -76,9 +74,7 @@ class ProductService(
 
     fun activate(productId: Long) {
         findById(productId).run {
-            if (active == Status.ACTIVE) {
-                throw BusinessException(Error.S206.message.format(code), Error.S206.code)
-            } else {
+            if (active != Status.ACTIVE) {
                 productRepository.save(copy(active = Status.ACTIVE))
             }
         }
