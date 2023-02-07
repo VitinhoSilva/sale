@@ -12,20 +12,19 @@ class ProductQuantityService(
 
     fun setListProductAndQuantity(
         purchase: Purchase,
-        productsAndQuantityRequestList: List<ProductQuantityRequest>
+        productsAndQuantityRequestList: List<ProductQuantityRequest>,
     ): List<ProductQuantity> {
         val productsAndQuantity = mutableListOf<ProductQuantity>()
         productsAndQuantityRequestList.map {
             productsAndQuantity.add(
                 ProductQuantity(
                     purchase = purchase,
-                    product = productService.findById(it.productId),
-                    quantity = it.quantity
-                )
+                    product = productService.findByUuid(it.productId),
+                    quantity = it.quantity,
+                ),
             )
         }
 
         return productsAndQuantity
     }
-
 }

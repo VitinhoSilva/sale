@@ -6,14 +6,15 @@ import com.jvprojetos17.sale.security.UserCustomDetails
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class UserDetailsCustomService(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) : UserDetailsService {
-    override fun loadUserByUsername(id: String): UserDetails {
-        val user = userRepository.findById(id.toLong())
-            .orElseThrow { AuthenticationException("Usuario não encontrado", "999") }
+    override fun loadUserByUsername(uuid: String): UserDetails {
+        val user = userRepository.findByUuid(uuid)
+        if (Objects.isNull(user)) throw AuthenticationException("Usuario não encontrado!", "999")
         return UserCustomDetails(user)
     }
 }

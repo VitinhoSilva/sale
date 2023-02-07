@@ -1,29 +1,31 @@
 package com.jvprojetos17.sale.model
 
 import com.jvprojetos17.sale.enums.Situation
+import org.hibernate.annotations.GenericGenerator
 import java.time.LocalDate
+import java.util.UUID
 import javax.persistence.CascadeType
 import javax.persistence.Column
-import javax.validation.constraints.NotEmpty
-import javax.validation.constraints.NotNull
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
 import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
-
+import javax.validation.constraints.NotEmpty
+import javax.validation.constraints.NotNull
 
 @Entity(name = "purchase")
 data class Purchase(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "uuid", columnDefinition = "VARCHAR(36)")
+    var uuid: UUID? = null,
 
     @NotNull(message = "Informe o usuário!")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -42,6 +44,6 @@ data class Purchase(
     var situation: Situation = Situation.CONFIRMED,
 
     @Column
-    var createAt: LocalDate = LocalDate.now()
+    var createAt: LocalDate = LocalDate.now(),
 
 )

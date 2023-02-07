@@ -6,9 +6,9 @@ import javax.validation.constraints.NotNull
 data class ProductQuantityRequest(
 
     @field:NotNull(message = "Product id must be informed!")
-    var productId: Long,
+    var productId: String,
 
     @field:NotNull(message = "Quantity must be informed!")
     @field:Min(value = 1)
-    var quantity: Int
+    var quantity: Int,
 )

@@ -10,31 +10,36 @@ import com.jvprojetos17.sale.request.ProductQuantityRequest
 import com.jvprojetos17.sale.request.PurchaseRequest
 import com.jvprojetos17.sale.response.PurchaseResponse
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class PurchaseService(
     private val purchaseRepository: PurchaseRepository,
     private val userService: UserService,
     private val productService: ProductService,
-    private val productQuantityService: ProductQuantityService
+    private val productQuantityService: ProductQuantityService,
 ) {
 
-    fun findById(id: Long): Purchase {
-        return purchaseRepository.findById(id)
-            .orElseThrow { NotFoundException(Error.S307.message.format(id), Error.S307.code) }
+    fun findByUuid(uuid: String): Purchase {
+        purchaseRepository.findByUuid(uuid).run {
+            return if (Objects.nonNull(this)) {
+                this
+            } else {
+                throw NotFoundException(Error.S204.message.format(uuid), Error.S204.code)
+            }
+        }
     }
 
-    fun getById(id: Long): PurchaseResponse {
-        return purchaseRepository.findById(id)
-            .orElseThrow { NotFoundException(Error.S307.message.format(id), Error.S307.code) }.toResponse()
+    fun getById(id: String): PurchaseResponse {
+        return findByUuid(id).toResponse()
     }
 
     fun calculateTotalPurchaseByProductPrice(productsAndQuantity: List<ProductQuantityRequest>): Double {
-        return productsAndQuantity.sumByDouble { productService.findById(it.productId).price * it.quantity }
+        return productsAndQuantity.sumByDouble { productService.findByUuid(it.productId).price * it.quantity }
     }
 
     fun checkProductsAvailability(purchaseRequest: PurchaseRequest) {
-        val productsCodeNotAvailable = mutableListOf<Long>()
+        val productsCodeNotAvailable = mutableListOf<String>()
 
         purchaseRequest.productsAndQuantity.forEach {
             if (!productService.isAvailableStockByProductAndQuantity(it.productId, it.quantity)) {
@@ -50,11 +55,11 @@ class PurchaseService(
     fun save(purchaseRequest: PurchaseRequest) {
         checkProductsAvailability(purchaseRequest)
 
-        val user = userService.findById(purchaseRequest.userId)
+        val user = userService.findByUuid(purchaseRequest.userId)
         val total = calculateTotalPurchaseByProductPrice(purchaseRequest.productsAndQuantity)
         val purchase = Purchase(
             user = user,
-            total = total
+            total = total,
         )
 
         purchase.products =
@@ -62,13 +67,11 @@ class PurchaseService(
 
         purchaseRepository.save(purchase)
         purchaseRequest.productsAndQuantity.map { productService.lowInStock(it.productId, it.quantity) }
-
     }
 
     fun getByUserId(userId: Long): List<PurchaseResponse> {
-        return purchaseRepository.findByUserId(userId).run {
+        return purchaseRepository.findByUserUuid(userId).run {
             this.map { it.toResponse() }
         }
     }
-
 }

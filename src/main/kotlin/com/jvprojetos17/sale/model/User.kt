@@ -10,8 +10,6 @@ import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
 import javax.persistence.FetchType
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.validation.constraints.Email
@@ -22,8 +20,8 @@ import javax.validation.constraints.Size
 data class User(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
+    @Column(name = "uuid", columnDefinition = "VARCHAR(36)")
+    var uuid: String? = null,
 
     @Column
     @Size(max = 255)
@@ -52,7 +50,7 @@ data class User(
     var profiles: Set<Profile> = setOf(),
 
     @Column
-    @Enumerated(EnumType.ORDINAL)
-    var active: Status = Status.ACTIVE
+    @Enumerated(EnumType.STRING)
+    var active: Status = Status.TRUE,
 
 )

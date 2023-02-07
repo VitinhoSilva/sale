@@ -1,12 +1,13 @@
 package com.jvprojetos17.sale.model
 
 import com.jvprojetos17.sale.enums.Status
+import org.hibernate.annotations.GenericGenerator
+import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
 import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
@@ -16,8 +17,10 @@ import javax.validation.constraints.Size
 data class Product(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "uuid", columnDefinition = "VARCHAR(36)")
+    var uuid: String? = null,
 
     @Column
     @Size(max = 255)
@@ -40,5 +43,5 @@ data class Product(
 
     @Column
     @Enumerated(EnumType.ORDINAL)
-    var active: Status = Status.ACTIVE
+    var active: Status = Status.TRUE,
 )

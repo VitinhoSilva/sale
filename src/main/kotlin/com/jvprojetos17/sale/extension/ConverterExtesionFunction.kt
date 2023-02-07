@@ -11,14 +11,13 @@ import com.jvprojetos17.sale.response.ProductResponse
 import com.jvprojetos17.sale.response.PurchaseResponse
 import com.jvprojetos17.sale.response.UserResponse
 
-
 fun User.toResponse(): UserResponse {
     return UserResponse(
-        id = this.id,
+        uuid = this.uuid,
         name = this.name,
         cpf = this.cpf,
         email = this.email,
-        active = this.active
+        active = this.active,
     )
 }
 
@@ -33,21 +32,21 @@ fun UserRequest.toEntity(): User {
 
 fun Product.toResponse(): ProductResponse {
     return ProductResponse(
-        id = this.id,
+        uuid = this.uuid,
         description = this.description,
         code = this.code,
         price = this.price,
         stock = this.stock,
-        active = this.active
+        active = this.active,
     )
 }
 
 fun Product.toResponseBasic(): ProductResponse {
     return ProductResponse(
-        id = this.id,
+        uuid = this.uuid,
         description = this.description,
         code = this.code,
-        price = this.price
+        price = this.price,
     )
 }
 
@@ -62,19 +61,19 @@ fun ProductRequest.toEntity(): Product {
 
 fun ProductQuantity.toResponse(): ProductQuantityResponse {
     return ProductQuantityResponse(
-        id = this.id,
+        uuid = this.uuid,
         product = this.product.toResponseBasic(),
-        quantity = this.quantity
+        quantity = this.quantity,
     )
 }
 
 fun Purchase.toResponse(): PurchaseResponse {
     return PurchaseResponse(
-        id = this.id,
+        uuid = this.uuid,
         user = this.user.toResponse(),
         products = this.products.map { it.toResponse() },
         total = this.total,
         situation = this.situation,
-        createAt = this.createAt
+        createAt = this.createAt,
     )
 }

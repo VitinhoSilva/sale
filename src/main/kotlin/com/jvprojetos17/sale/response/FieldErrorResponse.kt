@@ -5,5 +5,5 @@ import com.fasterxml.jackson.annotation.JsonInclude
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class FieldErrorResponse(
     var messsage: String,
-    var field: String? = null
+    var field: String? = null,
 )

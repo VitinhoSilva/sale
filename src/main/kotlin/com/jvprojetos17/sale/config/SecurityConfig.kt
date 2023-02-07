@@ -29,11 +29,11 @@ class SecurityConfig(
     private val userRepository: UserRepository,
     private val userDetails: UserDetailsCustomService,
     private val jwtUtil: JwtUtil,
-    private val customEntryPoint: CustomAuthenticationEntryPoint
+    private val customEntryPoint: CustomAuthenticationEntryPoint,
 ) : WebSecurityConfigurerAdapter() {
 
-    private val PUBLIC_MATCHERS = arrayOf("/users")
-    private val PUBLIC_POST_MATCHERS = arrayOf<String>()
+    private val PUBLIC_MATCHERS = arrayOf<String>()
+    private val PUBLIC_POST_MATCHERS = arrayOf("/users")
     private val ADMIN_MATCHERS = arrayOf("/admin/**")
 
     override fun configure(auth: AuthenticationManagerBuilder) {
@@ -55,8 +55,12 @@ class SecurityConfig(
 
     override fun configure(web: WebSecurity) {
         web.ignoring().antMatchers(
-            "/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/**",
-            "/swagger-ui.html", "/webjars/**"
+            "/v2/api-docs",
+            "/configuration/ui",
+            "/swagger-resources/**",
+            "/configuration/**",
+            "/swagger-ui.html",
+            "/webjars/**",
         )
     }
 
@@ -76,5 +80,4 @@ class SecurityConfig(
     fun bCryptPasswordEncoder(): BCryptPasswordEncoder {
         return BCryptPasswordEncoder()
     }
-
 }

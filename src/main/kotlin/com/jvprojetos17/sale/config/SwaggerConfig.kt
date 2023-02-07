@@ -21,11 +21,10 @@ class SwaggerConfig {
         .apis(RequestHandlerSelectors.basePackage("com.jvprojetos17.sale.controller"))
         .paths(PathSelectors.any())
         .build()
-
         .apiInfo(
             ApiInfoBuilder()
                 .title("Sale")
                 .description("Sale api")
-                .build()
+                .build(),
         )
 }

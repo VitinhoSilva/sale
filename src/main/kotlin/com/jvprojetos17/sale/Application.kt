@@ -6,7 +6,7 @@ import org.springframework.boot.runApplication
 @SpringBootApplication
 class Application
 
-//TODO:
+// TODO:
 // 1 - Implementar swagger; -FEITO!
 // 2 - Implementar roles para ter determinados acessos definidos pela regra de negócio; -FEITO!
 // 3 - Implementar JWT para autenticação; -FEITO!

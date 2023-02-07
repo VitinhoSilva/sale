@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse
 class AuthorizationFilter(
     authenticationManager: AuthenticationManager,
     private val userDetails: UserDetailsCustomService,
-    private val jwtUtil: JwtUtil
+    private val jwtUtil: JwtUtil,
 ) : BasicAuthenticationFilter(authenticationManager) {
 
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
@@ -33,5 +33,4 @@ class AuthorizationFilter(
         val user = userDetails.loadUserByUsername(subject)
         return UsernamePasswordAuthenticationToken(user, null, user.authorities)
     }
-
 }

@@ -1,8 +1,8 @@
 CREATE TABLE product_quantity (
-  id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  purchase_id BIGINT(20) NOT NULL,
-  product_id BIGINT(20) NOT NULL,
+  uuid VARCHAR(36) NOT NULL PRIMARY KEY,
+  purchase_id VARCHAR(36) NOT NULL,
+  product_id VARCHAR(36) NOT NULL,
   quantity BIGINT NOT NULL,
-  FOREIGN KEY (purchase_id) REFERENCES purchase (id),
-  FOREIGN KEY (product_id) REFERENCES product (id)
+  FOREIGN KEY (purchase_id) REFERENCES purchase (uuid),
+  FOREIGN KEY (product_id) REFERENCES product (uuid)
 );

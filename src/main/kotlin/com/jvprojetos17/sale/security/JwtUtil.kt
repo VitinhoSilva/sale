@@ -17,9 +17,9 @@ class JwtUtil {
     @Value("\${jwt.secret}")
     private val secret: String? = null
 
-    fun generateToken(id: Long): String {
+    fun generateToken(id: String): String {
         return Jwts.builder()
-            .setSubject(id.toString())
+            .setSubject(id)
             .setExpiration(Date(System.currentTimeMillis() + expiration!!))
             .signWith(SignatureAlgorithm.HS512, secret!!.toByteArray())
             .compact()
@@ -44,5 +44,4 @@ class JwtUtil {
     fun getSubject(token: String): String {
         return getClaims(token).subject
     }
-
 }

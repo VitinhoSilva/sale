@@ -15,14 +15,14 @@ import javax.servlet.http.HttpServletResponse
 class AuthenticationFilter(
     authenticationManager: AuthenticationManager,
     private val userRepository: UserRepository,
-    private val jwtUtil: JwtUtil
+    private val jwtUtil: JwtUtil,
 ) : UsernamePasswordAuthenticationFilter(authenticationManager) {
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
         try {
             val loginRequest = jacksonObjectMapper().readValue(request.inputStream, LoginRequest::class.java)
-            val id = userRepository.findByCpf(loginRequest.cpf)?.id
-            val authToken = UsernamePasswordAuthenticationToken(id, loginRequest.password)
+            val uuid = userRepository.findByCpf(loginRequest.cpf)?.uuid
+            val authToken = UsernamePasswordAuthenticationToken(uuid, loginRequest.password)
             return authenticationManager.authenticate(authToken)
         } catch (ex: Exception) {
             throw AuthenticationException("Falha ao autenticar", "999")
@@ -33,11 +33,10 @@ class AuthenticationFilter(
         request: HttpServletRequest,
         response: HttpServletResponse,
         chain: FilterChain,
-        authResult: Authentication
+        authResult: Authentication,
     ) {
-        val id = (authResult.principal as UserCustomDetails).id
-        val token = id.let { jwtUtil.generateToken(it) }
+        val uuid = (authResult.principal as UserCustomDetails).uuid
+        val token = uuid.let { jwtUtil.generateToken(uuid) }
         response.addHeader("Authorization", "Bearer $token")
     }
-
 }

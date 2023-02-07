@@ -20,7 +20,7 @@ class GlobalExceptionHandler {
             HttpStatus.NOT_FOUND.value(),
             ex.message,
             ex.errorCode,
-            null
+            null,
         )
 
         return ResponseEntity(error, HttpStatus.NOT_FOUND)
@@ -32,7 +32,7 @@ class GlobalExceptionHandler {
             HttpStatus.BAD_REQUEST.value(),
             ex.message,
             ex.errorCode,
-            null
+            null,
         )
 
         return ResponseEntity(error, HttpStatus.BAD_REQUEST)
@@ -41,13 +41,13 @@ class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleMethodArgumentNotValidException(
         ex: MethodArgumentNotValidException,
-        request: WebRequest
+        request: WebRequest,
     ): ResponseEntity<ErrorResponse> {
         val error = ErrorResponse(
             HttpStatus.UNPROCESSABLE_ENTITY.value(),
             Error.S002.message,
             Error.S002.code,
-            ex.bindingResult.fieldErrors.map { FieldErrorResponse(it.defaultMessage ?: "invalid", it.field) }
+            ex.bindingResult.fieldErrors.map { FieldErrorResponse(it.defaultMessage ?: "invalid", it.field) },
         )
 
         return ResponseEntity(error, HttpStatus.UNPROCESSABLE_ENTITY)
@@ -59,7 +59,7 @@ class GlobalExceptionHandler {
             HttpStatus.BAD_REQUEST.value(),
             ex.message,
             ex.errorCode,
-            null
+            null,
         )
 
         return ResponseEntity(error, HttpStatus.BAD_REQUEST)
@@ -68,18 +68,17 @@ class GlobalExceptionHandler {
     @ExceptionHandler(StockNotAvailableException::class)
     fun handleStockNotAvailableException(
         ex: StockNotAvailableException,
-        request: WebRequest
+        request: WebRequest,
     ): ResponseEntity<ErrorResponse> {
         val error = ErrorResponse(
             HttpStatus.BAD_REQUEST.value(),
             ex.message,
             ex.errorCode,
-            ex.productsNotAvailable.map { FieldErrorResponse("Product id: $it") }
+            ex.productsNotAvailable.map { FieldErrorResponse("Product id: $it") },
         )
 
         return ResponseEntity(error, HttpStatus.BAD_REQUEST)
     }
-
 
     @ExceptionHandler(AccessDeniedException::class)
     fun handleAccessDeniedException(ex: AccessDeniedException, request: WebRequest): ResponseEntity<ErrorResponse> {
@@ -87,10 +86,9 @@ class GlobalExceptionHandler {
             HttpStatus.FORBIDDEN.value(),
             Error.S001.message,
             Error.S001.code,
-            null
+            null,
         )
 
         return ResponseEntity(error, HttpStatus.FORBIDDEN)
     }
-
 }

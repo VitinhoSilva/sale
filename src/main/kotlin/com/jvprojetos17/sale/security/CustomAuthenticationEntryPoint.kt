@@ -11,11 +11,11 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @Component
-class CustomAuthenticationEntryPoint: AuthenticationEntryPoint {
+class CustomAuthenticationEntryPoint : AuthenticationEntryPoint {
     override fun commence(
         request: HttpServletRequest?,
         response: HttpServletResponse,
-        authException: AuthenticationException?
+        authException: AuthenticationException?,
     ) {
         response.contentType = "application/json"
         response.status = HttpServletResponse.SC_UNAUTHORIZED

@@ -3,7 +3,6 @@ package com.jvprojetos17.sale.service
 import com.jvprojetos17.sale.enums.Error
 import com.jvprojetos17.sale.enums.Profile
 import com.jvprojetos17.sale.enums.Status
-import com.jvprojetos17.sale.exception.BusinessException
 import com.jvprojetos17.sale.exception.NotFoundException
 import com.jvprojetos17.sale.extension.toEntity
 import com.jvprojetos17.sale.extension.toResponse
@@ -17,19 +16,26 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import java.util.Objects
+import java.util.UUID
 
 @Service
 class UserService(
     private val userRepository: UserRepository,
-    private val bCrypt: BCryptPasswordEncoder
+    private val bCrypt: BCryptPasswordEncoder,
 ) {
 
-    fun findById(id: Long): User {
-        return userRepository.findById(id)
-            .orElseThrow { NotFoundException(Error.S101.message.format(id), Error.S101.code) }
+    fun findByUuid(uuid: String): User {
+        userRepository.findByUuid(uuid).run {
+            return if (Objects.nonNull(this)) {
+                this
+            } else {
+                throw NotFoundException(Error.S204.message.format(uuid), Error.S204.code)
+            }
+        }
     }
 
-    fun getById(id: Long): UserResponse {
+    fun getById(id: String): UserResponse {
         return userRepository.findById(id)
             .orElseThrow { NotFoundException(Error.S101.message.format(id), Error.S101.code) }.toResponse()
     }
@@ -38,12 +44,12 @@ class UserService(
         userRequest.toEntity().run {
             userRepository.save(
                 copy(
+                    uuid = UUID.randomUUID().toString(),
                     profiles = setOf(Profile.CUSTOMER),
-                    password = bCrypt.encode(userRequest.password)
-                )
+                    password = bCrypt.encode(userRequest.password),
+                ),
             )
         }
-
     }
 
     fun getAllActives(situation: Status): List<UserResponse> {
@@ -51,13 +57,15 @@ class UserService(
     }
 
     fun filter(
-        page: Pageable, id: Long?, name: String?, cpf: String?, email: String?, active: Status
+        page: Pageable,
+        name: String?,
+        cpf: String?,
+        email: String?,
+        active: Status,
     ): Page<UserResponse> {
-
         val qUser: QUser = QUser.user
         val where = BooleanBuilder()
 
-        id?.let { where.and(qUser.id.eq(it)) }
         name?.let { where.and(qUser.name.contains(it)) }
         cpf?.let { where.and(qUser.cpf.contains(it)) }
         email?.let { where.and(qUser.email.contains(it)) }
@@ -66,26 +74,26 @@ class UserService(
         return userRepository.findAll(where, page).let { it -> it.map { it.toResponse() } }
     }
 
-    fun update(userId: Long, userRequest: UserRequest) {
+    fun update(userId: String, userRequest: UserRequest) {
         userRequest.toEntity().run {
             userRepository.save(
-                copy(id = userId)
+                copy(uuid = userId),
             )
         }
     }
 
-    fun inactivate(userId: Long) {
-        findById(userId).run {
-            if (active != Status.INACTIVE) {
-                userRepository.save(copy(active = Status.INACTIVE))
+    fun inactivate(userId: String) {
+        findByUuid(userId).run {
+            if (active != Status.FALSE) {
+                userRepository.save(copy(active = Status.FALSE))
             }
         }
     }
 
-    fun activate(userId: Long) {
-        findById(userId).run {
-            if (active != Status.ACTIVE) {
-                userRepository.save(copy(active = Status.ACTIVE))
+    fun activate(userId: String) {
+        findByUuid(userId).run {
+            if (active != Status.TRUE) {
+                userRepository.save(copy(active = Status.TRUE))
             }
         }
     }

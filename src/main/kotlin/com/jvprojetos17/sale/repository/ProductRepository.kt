@@ -8,21 +8,24 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
-
 @Repository
-interface ProductRepository : JpaRepository<Product, Long>, QuerydslPredicateExecutor<Product> {
+interface ProductRepository : JpaRepository<Product, String>, QuerydslPredicateExecutor<Product> {
     fun findByActive(active: Status): Set<Product>
 
     @Query(
-        nativeQuery = true, value = "SELECT " +
-                "CASE WHEN COUNT(*) >= 1 THEN 'TRUE' ELSE 'FALSE' END AS ISAVAILABLE " +
-                "FROM " +
-                "product p " +
-                "WHERE " +
-                "p.id = :productId " +
-                "AND :quantity <= p.stock"
-    ) fun checkAvailableStockByProductAndQuantity(
-        @Param("productId") productId: Long,
-        @Param("quantity") quantity: Int
+        nativeQuery = true,
+        value = "SELECT " +
+            "CASE WHEN COUNT(*) >= 1 THEN 'TRUE' ELSE 'FALSE' END AS ISAVAILABLE " +
+            "FROM " +
+            "product p " +
+            "WHERE " +
+            "p.uuid = :productId " +
+            "AND :quantity <= p.stock",
+    )
+    fun checkAvailableStockByProductIdAndQuantity(
+        @Param("productId") productId: String,
+        @Param("quantity") quantity: Int,
     ): Boolean
+
+    fun findByUuid(uuid: String): Product
 }

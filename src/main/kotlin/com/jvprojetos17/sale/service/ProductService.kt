@@ -2,7 +2,6 @@ package com.jvprojetos17.sale.service
 
 import com.jvprojetos17.sale.enums.Error
 import com.jvprojetos17.sale.enums.Status
-import com.jvprojetos17.sale.exception.BusinessException
 import com.jvprojetos17.sale.exception.NotFoundException
 import com.jvprojetos17.sale.extension.toEntity
 import com.jvprojetos17.sale.extension.toResponse
@@ -16,20 +15,25 @@ import com.querydsl.core.BooleanBuilder
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.util.Objects
 
 @Service
 class ProductService(
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
 ) {
 
-    fun findById(id: Long): Product {
-        return productRepository.findById(id)
-            .orElseThrow { NotFoundException(Error.S204.message.format(id), Error.S204.code) }
+    fun findByUuid(uuid: String): Product {
+        productRepository.findByUuid(uuid).run {
+            return if (Objects.nonNull(this)) {
+                this
+            } else {
+                throw NotFoundException(Error.S204.message.format(uuid), Error.S204.code)
+            }
+        }
     }
 
-    fun getById(id: Long): ProductResponse {
-        return productRepository.findById(id)
-            .orElseThrow { NotFoundException(Error.S204.message.format(id), Error.S204.code) }.toResponse()
+    fun getById(id: String): ProductResponse {
+        return productRepository.findByUuid(id).toResponse()
     }
 
     fun save(productRequest: ProductRequest) {
@@ -41,13 +45,14 @@ class ProductService(
     }
 
     fun filter(
-        page: Pageable, id: Long?, description: String?, code: String?, active: Status
+        page: Pageable,
+        description: String?,
+        code: String?,
+        active: Status,
     ): Page<ProductResponse> {
-
         val qProduct: QProduct = QProduct.product
         val where = BooleanBuilder()
 
-        id?.let { where.and(qProduct.id.eq(it)) }
         description?.let { where.and(qProduct.description.contains(it)) }
         code?.let { where.and(qProduct.code.contains(it)) }
         active.let { where.and(qProduct.active.eq(it)) }
@@ -55,47 +60,46 @@ class ProductService(
         return productRepository.findAll(where, page).let { it -> it.map { it.toResponse() } }
     }
 
-    fun update(productId: Long, productRequest: ProductRequest) {
-        findById(productId)
+    fun update(productId: String, productRequest: ProductRequest) {
+        findByUuid(productId)
         productRequest.toEntity().run {
             productRepository.save(
-                copy(id = productId)
+                copy(uuid = productId),
             )
         }
     }
 
-    fun inactivate(productId: Long) {
-        findById(productId).run {
-            if (active != Status.INACTIVE) {
-                productRepository.save(copy(active = Status.INACTIVE))
+    fun inactivate(productId: String) {
+        findByUuid(productId).run {
+            if (active != Status.FALSE) {
+                productRepository.save(copy(active = Status.FALSE))
             }
         }
     }
 
-    fun activate(productId: Long) {
-        findById(productId).run {
-            if (active != Status.ACTIVE) {
-                productRepository.save(copy(active = Status.ACTIVE))
+    fun activate(productId: String) {
+        findByUuid(productId).run {
+            if (active != Status.TRUE) {
+                productRepository.save(copy(active = Status.TRUE))
             }
         }
     }
 
-    fun isAvailableStockByProductAndQuantity(productId: Long, quantityId: Int): Boolean {
-        return productRepository.checkAvailableStockByProductAndQuantity(productId, quantityId)
+    fun isAvailableStockByProductAndQuantity(productId: String, quantityId: Int): Boolean {
+        return productRepository.checkAvailableStockByProductIdAndQuantity(productId, quantityId)
     }
 
-    fun lowInStock(productId: Long, quantityId: Int) {
-        findById(productId).run {
+    fun lowInStock(productId: String, quantityId: Int) {
+        findByUuid(productId).run {
             productRepository.save(copy(stock = stock - quantityId))
         }
     }
 
     fun addStock(productStockRequest: ProductStockRequest) {
         productStockRequest.productsAndQuantity.map {
-            findById(it.productId).run {
+            findByUuid(it.productId).run {
                 productRepository.save(copy(stock = stock + it.quantity))
             }
         }
     }
-
 }

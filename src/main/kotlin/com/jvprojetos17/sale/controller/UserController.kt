@@ -1,8 +1,8 @@
 package com.jvprojetos17.sale.controller
 
 import com.jvprojetos17.sale.anotationCustom.PermissionAdmin
-import com.jvprojetos17.sale.anotationCustom.PermissionThisUser
 import com.jvprojetos17.sale.anotationCustom.PermissionAdminOrThisUser
+import com.jvprojetos17.sale.anotationCustom.PermissionThisUser
 import com.jvprojetos17.sale.enums.Status
 import com.jvprojetos17.sale.request.UserRequest
 import com.jvprojetos17.sale.response.UserResponse
@@ -14,31 +14,34 @@ import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
 
 @RestController
 @RequestMapping("/users")
 class UserController(
-    private val userService: UserService
+    private val userService: UserService,
 ) {
 
-    @GetMapping("/{userId}")
+    @GetMapping("/{id}")
     @PermissionAdminOrThisUser
-    fun getById(@PathVariable userId: Long): ResponseEntity<UserResponse> {
-        return ResponseEntity.ok().body(userService.getById(userId))
+    fun getById(@PathVariable id: String): ResponseEntity<UserResponse> {
+        return ResponseEntity.ok().body(userService.getById(id))
     }
 
     @PostMapping
-    fun save(@RequestBody @Valid userRequest: UserRequest): ResponseEntity<HttpStatus> {
+    fun save(
+        @RequestBody @Valid
+        userRequest: UserRequest,
+    ): ResponseEntity<HttpStatus> {
         userService.save(userRequest)
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
@@ -53,35 +56,33 @@ class UserController(
     @PermissionAdmin
     @PreAuthorize("hasAnyRole('ADMIN')")
     fun getFilter(
-        @PageableDefault(sort = ["id"], direction = Sort.Direction.DESC, size = 10) page: Pageable,
-        @RequestParam(required = false) id: Long?,
+        @PageableDefault(sort = ["uuid"], direction = Sort.Direction.DESC, size = 10) page: Pageable,
         @RequestParam(required = false) name: String?,
         @RequestParam(required = false) cpf: String?,
         @RequestParam(required = false) email: String?,
         @RequestParam(required = false, defaultValue = "ACTIVE") active: Status,
     ): ResponseEntity<Page<UserResponse>> {
-        return ResponseEntity.ok().body(userService.filter(page, id, name, cpf, email, active))
+        return ResponseEntity.ok().body(userService.filter(page, name, cpf, email, active))
     }
 
-    @PutMapping("/{userId}")
+    @PutMapping("/{id}")
     @PermissionThisUser
-    fun update(@PathVariable userId: Long, @RequestBody userRequest: UserRequest): ResponseEntity<HttpStatus> {
-        userService.update(userId, userRequest)
+    fun update(@PathVariable id: String, @RequestBody userRequest: UserRequest): ResponseEntity<HttpStatus> {
+        userService.update(id, userRequest)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
-    @PatchMapping("/{userId}/inactivate")
+    @PatchMapping("/{id}/inactivate")
     @PermissionThisUser
-    fun inactivate(@PathVariable userId: Long): ResponseEntity<HttpStatus> {
-        userService.inactivate(userId)
+    fun inactivate(@PathVariable id: String): ResponseEntity<HttpStatus> {
+        userService.inactivate(id)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
-    @PatchMapping("/{userId}/activate")
+    @PatchMapping("/{id}/activate")
     @PermissionAdmin
-    fun activate(@PathVariable userId: Long): ResponseEntity<HttpStatus> {
-        userService.activate(userId)
+    fun activate(@PathVariable id: String): ResponseEntity<HttpStatus> {
+        userService.activate(id )
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
-
 }
