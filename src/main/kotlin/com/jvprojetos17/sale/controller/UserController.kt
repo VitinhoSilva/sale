@@ -4,6 +4,8 @@ import com.jvprojetos17.sale.anotationCustom.PermissionAdmin
 import com.jvprojetos17.sale.anotationCustom.PermissionAdminOrThisUser
 import com.jvprojetos17.sale.anotationCustom.PermissionThisUser
 import com.jvprojetos17.sale.enums.Status
+import com.jvprojetos17.sale.extension.toEntity
+import com.jvprojetos17.sale.extension.toResponse
 import com.jvprojetos17.sale.request.UserRequest
 import com.jvprojetos17.sale.response.UserResponse
 import com.jvprojetos17.sale.service.UserService
@@ -34,7 +36,7 @@ class UserController(
     @GetMapping("/{id}")
     @PermissionAdminOrThisUser
     fun getById(@PathVariable id: String): ResponseEntity<UserResponse> {
-        return ResponseEntity.ok().body(userService.getById(id))
+        return ResponseEntity.ok().body(userService.findByUuid(id)?.toResponse())
     }
 
     @PostMapping
@@ -42,14 +44,14 @@ class UserController(
         @RequestBody @Valid
         userRequest: UserRequest,
     ): ResponseEntity<HttpStatus> {
-        userService.save(userRequest)
+        userService.save(userRequest.toEntity())
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
     @GetMapping("/situation")
     @PermissionAdmin
     fun getAllBySituation(@RequestParam situation: Status): ResponseEntity<List<UserResponse>> {
-        return ResponseEntity.ok().body(userService.getAllActives(situation))
+        return ResponseEntity.ok().body(userService.getAllByStatus(situation))
     }
 
     @GetMapping("/filter")

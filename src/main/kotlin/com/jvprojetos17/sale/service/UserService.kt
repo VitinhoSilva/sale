@@ -25,34 +25,29 @@ class UserService(
     private val bCrypt: BCryptPasswordEncoder,
 ) {
 
-    fun findByUuid(uuid: String): User {
+    fun findByUuid(uuid: String): User? {
         userRepository.findByUuid(uuid).run {
             return if (Objects.nonNull(this)) {
                 this
             } else {
-                throw NotFoundException(Error.S204.message.format(uuid), Error.S204.code)
+                throw NotFoundException(Error.S101.message.format(uuid), Error.S101.code)
             }
         }
     }
 
-    fun getById(id: String): UserResponse {
-        return userRepository.findById(id)
-            .orElseThrow { NotFoundException(Error.S101.message.format(id), Error.S101.code) }.toResponse()
-    }
-
-    fun save(userRequest: UserRequest) {
-        userRequest.toEntity().run {
+    fun save(user: User) {
+        user.run {
             userRepository.save(
                 copy(
                     uuid = UUID.randomUUID().toString(),
                     profiles = setOf(Profile.CUSTOMER),
-                    password = bCrypt.encode(userRequest.password),
+                    password = bCrypt.encode(user.password),
                 ),
             )
         }
     }
 
-    fun getAllActives(situation: Status): List<UserResponse> {
+    fun getAllByStatus(situation: Status): List<UserResponse> {
         return userRepository.findByActive(situation).map { it.toResponse() }
     }
 
@@ -83,15 +78,15 @@ class UserService(
     }
 
     fun inactivate(userId: String) {
-        findByUuid(userId).run {
-            if (active != Status.FALSE) {
+        findByUuid(userId)?.run {
+            if (this.active != Status.FALSE) {
                 userRepository.save(copy(active = Status.FALSE))
             }
         }
     }
 
     fun activate(userId: String) {
-        findByUuid(userId).run {
+        findByUuid(userId)?.run {
             if (active != Status.TRUE) {
                 userRepository.save(copy(active = Status.TRUE))
             }

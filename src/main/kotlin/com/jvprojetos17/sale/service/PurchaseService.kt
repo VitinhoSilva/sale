@@ -48,7 +48,7 @@ class PurchaseService(
         }
 
         if (productsCodeNotAvailable.size > 0) {
-            throw StockNotAvailableException(Error.S207.message, Error.S207.code, productsCodeNotAvailable)
+            throw StockNotAvailableException(Error.S205.message, Error.S205.code, productsCodeNotAvailable)
         }
     }
 
@@ -57,13 +57,15 @@ class PurchaseService(
 
         val user = userService.findByUuid(purchaseRequest.userId)
         val total = calculateTotalPurchaseByProductPrice(purchaseRequest.productsAndQuantity)
-        val purchase = Purchase(
-            user = user,
-            total = total,
-        )
+        val purchase = user?.let {
+            Purchase(
+                user = it,
+                total = total,
+            )
+        }
 
-        purchase.products =
-            productQuantityService.setListProductAndQuantity(purchase, purchaseRequest.productsAndQuantity)
+        purchase?.products =
+            productQuantityService.setListProductAndQuantity(purchase!!, purchaseRequest.productsAndQuantity)
 
         purchaseRepository.save(purchase)
         purchaseRequest.productsAndQuantity.map { productService.lowInStock(it.productId, it.quantity) }

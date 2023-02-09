@@ -15,6 +15,6 @@ class UserDetailsCustomService(
     override fun loadUserByUsername(uuid: String): UserDetails {
         val user = userRepository.findByUuid(uuid)
         if (Objects.isNull(user)) throw AuthenticationException("Usuario não encontrado!", "999")
-        return UserCustomDetails(user)
+        return UserCustomDetails(user!!)
     }
 }

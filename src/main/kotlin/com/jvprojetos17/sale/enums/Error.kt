@@ -9,5 +9,5 @@ enum class Error(val code: String, val message: String) {
     S101("S-101", "User with id: [%s] not found!"),
 
     S204("S-204", "Product with id: [%s] not found!"),
-    S207("S-207", "Product don't have enough stock!"),
+    S205("S-205", "Product don't have enough stock!"),
 }
