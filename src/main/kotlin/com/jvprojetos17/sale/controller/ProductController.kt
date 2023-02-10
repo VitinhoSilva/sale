@@ -3,6 +3,7 @@ package com.jvprojetos17.sale.controller
 import com.jvprojetos17.sale.anotationCustom.PermissionAdmin
 import com.jvprojetos17.sale.anotationCustom.PermissionAdminOrCustomer
 import com.jvprojetos17.sale.enums.Status
+import com.jvprojetos17.sale.extension.toResponse
 import com.jvprojetos17.sale.request.ProductRequest
 import com.jvprojetos17.sale.request.ProductStockRequest
 import com.jvprojetos17.sale.response.ProductResponse
@@ -33,7 +34,7 @@ class ProductController(
     @GetMapping("/{productId}")
     @PermissionAdminOrCustomer
     fun getById(@PathVariable productId: String): ResponseEntity<ProductResponse> {
-        return ResponseEntity.ok().body(productService.getById(productId))
+        return ResponseEntity.ok().body(productService.findByUuid(productId)?.toResponse())
     }
 
     @PostMapping
@@ -48,8 +49,8 @@ class ProductController(
 
     @GetMapping("/situation")
     @PermissionAdmin
-    fun getAllByActive(@RequestParam situation: Status): ResponseEntity<List<ProductResponse>> {
-        return ResponseEntity.ok().body(productService.getAllActives(situation))
+    fun getAllByActive(@RequestParam active: Status): ResponseEntity<List<ProductResponse>> {
+        return ResponseEntity.ok().body(productService.getAllByActive(active))
     }
 
     @GetMapping("/filter")

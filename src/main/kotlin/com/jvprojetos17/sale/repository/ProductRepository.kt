@@ -27,5 +27,5 @@ interface ProductRepository : JpaRepository<Product, String>, QuerydslPredicateE
         @Param("quantity") quantity: Int,
     ): Boolean
 
-    fun findByUuid(uuid: String): Product
+    fun findByUuid(uuid: String): Product?
 }

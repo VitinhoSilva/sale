@@ -27,6 +27,7 @@ fun UserRequest.toEntity(): User {
         cpf = this.cpf,
         email = this.email,
         password = this.password,
+        profiles = this.profiles!!,
     )
 }
 

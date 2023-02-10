@@ -47,7 +47,7 @@ class UserService(
         }
     }
 
-    fun getAllByStatus(situation: Status): List<UserResponse> {
+    fun getAllByActive(situation: Status): List<UserResponse> {
         return userRepository.findByActive(situation).map { it.toResponse() }
     }
 
@@ -72,14 +72,16 @@ class UserService(
     fun update(userId: String, userRequest: UserRequest) {
         userRequest.toEntity().run {
             userRepository.save(
-                copy(uuid = userId),
+                copy(
+                    uuid = userId,
+                ),
             )
         }
     }
 
     fun inactivate(userId: String) {
         findByUuid(userId)?.run {
-            if (this.active != Status.FALSE) {
+            if (active != Status.FALSE) {
                 userRepository.save(copy(active = Status.FALSE))
             }
         }

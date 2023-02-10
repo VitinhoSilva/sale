@@ -51,7 +51,7 @@ class UserController(
     @GetMapping("/situation")
     @PermissionAdmin
     fun getAllBySituation(@RequestParam situation: Status): ResponseEntity<List<UserResponse>> {
-        return ResponseEntity.ok().body(userService.getAllByStatus(situation))
+        return ResponseEntity.ok().body(userService.getAllByActive(situation))
     }
 
     @GetMapping("/filter")

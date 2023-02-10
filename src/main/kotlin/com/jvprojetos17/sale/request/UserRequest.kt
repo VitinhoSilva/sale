@@ -1,5 +1,6 @@
 package com.jvprojetos17.sale.request
 
+import com.jvprojetos17.sale.enums.Profile
 import javax.validation.constraints.NotEmpty
 
 data class UserRequest(
@@ -15,4 +16,6 @@ data class UserRequest(
 
     @field:NotEmpty(message = "Password must be informed!")
     var password: String,
+
+    var profiles: Set<Profile>? = setOf(Profile.CUSTOMER)
 )

@@ -16,10 +16,11 @@ class ProductQuantityService(
     ): List<ProductQuantity> {
         val productsAndQuantity = mutableListOf<ProductQuantity>()
         productsAndQuantityRequestList.map {
+            val product = productService.findByUuid(it.productId)
             productsAndQuantity.add(
                 ProductQuantity(
                     purchase = purchase,
-                    product = productService.findByUuid(it.productId),
+                    product = product!!,
                     quantity = it.quantity,
                 ),
             )

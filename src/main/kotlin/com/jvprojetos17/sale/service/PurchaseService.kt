@@ -35,7 +35,7 @@ class PurchaseService(
     }
 
     fun calculateTotalPurchaseByProductPrice(productsAndQuantity: List<ProductQuantityRequest>): Double {
-        return productsAndQuantity.sumByDouble { productService.findByUuid(it.productId).price * it.quantity }
+        return productsAndQuantity.sumByDouble { productService.findByUuid(it.productId)?.price!! * it.quantity }
     }
 
     fun checkProductsAvailability(purchaseRequest: PurchaseRequest) {

@@ -3,17 +3,19 @@ package com.jvprojetos17.sale.service
 import com.jvprojetos17.sale.enums.Profile
 import com.jvprojetos17.sale.enums.Status
 import com.jvprojetos17.sale.exception.NotFoundException
+import com.jvprojetos17.sale.extension.toEntity
 import com.jvprojetos17.sale.model.User
 import com.jvprojetos17.sale.repository.UserRepository
 import com.jvprojetos17.sale.request.UserRequest
 import com.querydsl.core.BooleanBuilder
+import io.mockk.InternalPlatformDsl.toArray
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.Mockito.* // ktlint-disable no-wildcard-imports
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
@@ -111,7 +113,7 @@ class UserServiceTest {
 
         `when`(userRepository.findByActive(statusActive)).thenReturn(listUser)
 
-        userService.getAllByStatus(statusActive)
+        userService.getAllByActive(statusActive)
 
         verify(userRepository, times(1)).findByActive(statusActive)
         assertEquals(listUser.size, 1)
@@ -125,7 +127,7 @@ class UserServiceTest {
 
         `when`(userRepository.findByActive(statusInactive)).thenReturn(listUser)
 
-        userService.getAllByStatus(statusInactive)
+        userService.getAllByActive(statusInactive)
 
         verify(userRepository, times(1)).findByActive(statusInactive)
         assertEquals(listUser.size, 1)
@@ -152,11 +154,15 @@ class UserServiceTest {
     @Test
     fun `should update user`() {
         val userId = "144as1asasa4s7a-as41a45s"
-        val userRequest = buildUserRequest()
+        val userFake = buildUser().copy(uuid = userId, profiles = setOf(Profile.CUSTOMER))
+        val userRequestFake = buildUserRequest()
+        val userRequestFakeToEntity = userRequestFake.toEntity().copy(uuid = userId)
 
-        userService.update(userId, userRequest)
+        `when`(userRepository.save(userRequestFakeToEntity)).thenReturn(userFake)
 
-        verify(userRepository, times(1)).save(any())
+        userService.update(userId, userRequestFake)
+
+        verify(userRepository, times(1)).save(userFake)
     }
 
     @Test
@@ -168,7 +174,7 @@ class UserServiceTest {
 
         userService.inactivate(userId)
 
-        verify(userRepository, times(1)).save(any())
+        verify(userRepository, times(1)).save(userFake.copy(active = Status.FALSE))
     }
 
     @Test
@@ -180,6 +186,6 @@ class UserServiceTest {
 
         userService.activate(userId)
 
-        verify(userRepository, times(1)).save(any())
+        verify(userRepository, times(1)).save(userFake.copy(active = Status.TRUE))
     }
 }

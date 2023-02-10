@@ -22,7 +22,7 @@ class ProductService(
     private val productRepository: ProductRepository,
 ) {
 
-    fun findByUuid(uuid: String): Product {
+    fun findByUuid(uuid: String): Product? {
         productRepository.findByUuid(uuid).run {
             return if (Objects.nonNull(this)) {
                 this
@@ -32,15 +32,11 @@ class ProductService(
         }
     }
 
-    fun getById(id: String): ProductResponse {
-        return productRepository.findByUuid(id).toResponse()
-    }
-
     fun save(productRequest: ProductRequest) {
         productRepository.save(productRequest.toEntity())
     }
 
-    fun getAllActives(situation: Status): List<ProductResponse> {
+    fun getAllByActive(situation: Status): List<ProductResponse> {
         return productRepository.findByActive(situation).map { it.toResponse() }
     }
 
@@ -61,7 +57,6 @@ class ProductService(
     }
 
     fun update(productId: String, productRequest: ProductRequest) {
-        findByUuid(productId)
         productRequest.toEntity().run {
             productRepository.save(
                 copy(uuid = productId),
@@ -70,7 +65,7 @@ class ProductService(
     }
 
     fun inactivate(productId: String) {
-        findByUuid(productId).run {
+        findByUuid(productId)?.run {
             if (active != Status.FALSE) {
                 productRepository.save(copy(active = Status.FALSE))
             }
@@ -78,7 +73,7 @@ class ProductService(
     }
 
     fun activate(productId: String) {
-        findByUuid(productId).run {
+        findByUuid(productId)?.run {
             if (active != Status.TRUE) {
                 productRepository.save(copy(active = Status.TRUE))
             }
@@ -90,14 +85,14 @@ class ProductService(
     }
 
     fun lowInStock(productId: String, quantityId: Int) {
-        findByUuid(productId).run {
+        findByUuid(productId)?.run {
             productRepository.save(copy(stock = stock - quantityId))
         }
     }
 
     fun addStock(productStockRequest: ProductStockRequest) {
         productStockRequest.productsAndQuantity.map {
-            findByUuid(it.productId).run {
+            findByUuid(it.productId)?.run {
                 productRepository.save(copy(stock = stock + it.quantity))
             }
         }
